@@ -8,10 +8,11 @@ namespace EyesOfTheDragon
 {
     public class Game1 : Game
     {
-        private readonly TitleState _titleState;
         private readonly GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         public GameStateManager GameStateManager { get; private set; }
+        public ITitleState TitleState { get; private set; }
+        public IStartMenuState StartMenuState { get; private set; }
 
         public Game1()
         {
@@ -30,7 +31,8 @@ namespace EyesOfTheDragon
             Components.Add(GameStateManager);
             Services.AddService(typeof(GameStateManager), GameStateManager);
 
-            _titleState = new(this);
+            TitleState = new TitleState(this);
+            StartMenuState = new StartMenuState(this);
         }
 
         protected override void Initialize()
@@ -45,7 +47,7 @@ namespace EyesOfTheDragon
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             Services.AddService(typeof(SpriteBatch), _spriteBatch);
-            GameStateManager.PushState(_titleState);
+            GameStateManager.PushState((TitleState)TitleState);
         }
 
         protected override void Update(GameTime gameTime)

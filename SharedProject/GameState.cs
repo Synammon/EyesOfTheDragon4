@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using SharedProject.Controls;
 
 namespace SharedProject
 {
@@ -9,9 +10,13 @@ namespace SharedProject
     {
         #region Fields and Properties
 
+        protected ControlManager controls;
+
         private readonly List<GameComponent> childComponents;
         
         protected SpriteBatch SpriteBatch { get; set; }
+
+        public ControlManager ControlManager { get { return controls; } }
 
         public List<GameComponent> Components
         {
@@ -41,6 +46,7 @@ namespace SharedProject
         #endregion
 
         #region MG Drawable Game Component Methods
+
         public override void Initialize()
         {
             base.Initialize();
@@ -51,6 +57,7 @@ namespace SharedProject
             base.LoadContent();
 
             SpriteBatch = Game.Services.GetService<SpriteBatch>();
+            controls = new(Game.Content.Load<SpriteFont>(@"Fonts/ControlFont"));
         }
 
         public override void Update(GameTime gameTime)
@@ -61,6 +68,7 @@ namespace SharedProject
                     component.Update(gameTime);
             }
 
+            ControlManager.Update(gameTime, PlayerIndex.One);
             base.Update(gameTime);
         }
 
@@ -77,6 +85,8 @@ namespace SharedProject
                         drawComponent.Draw(gameTime);
                 }
             }
+
+            ControlManager.Draw(SpriteBatch);
 
             base.Draw(gameTime);
         }

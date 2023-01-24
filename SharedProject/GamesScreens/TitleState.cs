@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using SharedProject.Controls;
 
 namespace SharedProject.GameScreens
 {
@@ -44,6 +45,22 @@ namespace SharedProject.GameScreens
 
             ContentManager Content = Game.Content;
             backgroundImage = Content.Load<Texture2D>(@"Backgrounds\titlescreen");
+
+            LinkLabel startLabel = new();
+            startLabel.Position = new Vector2(350, 600);
+            startLabel.Text = "Press ENTER to begin";
+            startLabel.Color = Color.White;
+            startLabel.TabStop = true;
+            startLabel.HasFocus = true;
+            startLabel.Selected += StartLabel_Selected; ;
+
+            ControlManager.Add(startLabel);
+        }
+
+        private void StartLabel_Selected(object sender, EventArgs e)
+        {
+            StartMenuState state = (StartMenuState)Game.Services.GetService<IStartMenuState>().Tag;
+            StateManager.ChangeState(state);
         }
 
         public override void Update(GameTime gameTime)
@@ -55,12 +72,12 @@ namespace SharedProject.GameScreens
         {
             SpriteBatch.Begin();
 
-            base.Draw(gameTime);
-
             SpriteBatch.Draw(
                 backgroundImage,
                 Settings.BaseRectangle,
                 Color.White);
+
+            base.Draw(gameTime);
 
             SpriteBatch.End();
         }
