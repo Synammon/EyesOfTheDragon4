@@ -6,7 +6,7 @@ using SharedProject.GameScreens;
 
 namespace EyesOfTheDragon
 {
-    public class Game1 : Game
+    public class Desktop : Game
     {
         private readonly GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
@@ -14,7 +14,7 @@ namespace EyesOfTheDragon
         public ITitleState TitleState { get; private set; }
         public IStartMenuState StartMenuState { get; private set; }
 
-        public Game1()
+        public Desktop()
         {
             _graphics = new GraphicsDeviceManager(this);
 
@@ -38,6 +38,9 @@ namespace EyesOfTheDragon
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
+
+            Settings.TargetHeight = _graphics.PreferredBackBufferHeight;
+            Settings.TargetWidth = _graphics.PreferredBackBufferWidth;
 
             base.Initialize();
         }
