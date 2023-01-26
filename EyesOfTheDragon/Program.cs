@@ -1,3 +1,3 @@
 ﻿
-using var game = new EyesOfTheDragon.Game1();
+using var game = new EyesOfTheDragon.Desktop();
 game.Run();

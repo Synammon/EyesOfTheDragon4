@@ -16,6 +16,7 @@ namespace SharedProject.GameScreens
         #region Field region
 
         Texture2D backgroundImage;
+        RenderTarget2D renderTarget;
 
         readonly GameState tag;
 
@@ -43,15 +44,20 @@ namespace SharedProject.GameScreens
         {
             base.LoadContent();
 
+            renderTarget = new(GraphicsDevice, Settings.BaseWidth, Settings.BaseHeight);
+
             ContentManager Content = Game.Content;
             backgroundImage = Content.Load<Texture2D>(@"Backgrounds\titlescreen");
 
-            LinkLabel startLabel = new();
-            startLabel.Position = new Vector2(350, 600);
-            startLabel.Text = "Press ENTER to begin";
-            startLabel.Color = Color.White;
-            startLabel.TabStop = true;
-            startLabel.HasFocus = true;
+            Label startLabel = new()
+            {
+                Position = new Vector2(350, 600),
+                Text = "Tap to begin",
+                Color = Color.White,
+                TabStop = true,
+                HasFocus = true
+            };
+
             startLabel.Selected += StartLabel_Selected; ;
 
             ControlManager.Add(startLabel);
@@ -65,11 +71,18 @@ namespace SharedProject.GameScreens
 
         public override void Update(GameTime gameTime)
         {
+            if (Xin.WasMouseReleased(MouseButtons.Left) || Xin.TouchReleased() || Xin.WasKeyPressed())
+            {
+                StartLabel_Selected(this, null);
+            }
             base.Update(gameTime);
         }
 
         public override void Draw(GameTime gameTime)
         {
+            GraphicsDevice.SetRenderTarget(renderTarget);
+            renderTarget.GraphicsDevice.Clear(Color.Black);
+
             SpriteBatch.Begin();
 
             SpriteBatch.Draw(
@@ -78,6 +91,14 @@ namespace SharedProject.GameScreens
                 Color.White);
 
             base.Draw(gameTime);
+
+            SpriteBatch.End();
+
+            GraphicsDevice.SetRenderTarget(null);
+
+            SpriteBatch.Begin();
+
+            SpriteBatch.Draw(renderTarget, Settings.TargetRectangle, Color.White);
 
             SpriteBatch.End();
         }
