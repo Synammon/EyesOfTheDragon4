@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using SharedProject.Controls;
+using SharedProject.GamesScreens;
 
 namespace SharedProject.GameScreens
 {
@@ -65,7 +66,7 @@ namespace SharedProject.GameScreens
 
         private void StartLabel_Selected(object sender, EventArgs e)
         {
-            StartMenuState state = (StartMenuState)Game.Services.GetService<IStartMenuState>().Tag;
+            GameState state = Game.Services.GetService<IGamePlayState>().Tag;
             StateManager.ChangeState(state);
         }
 

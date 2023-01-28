@@ -1,9 +1,11 @@
 ﻿using Android.Views;
+using EyesOfTheDragonAndroid.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using SharedProject;
 using SharedProject.GameScreens;
+using SharedProject.GamesScreens;
 
 namespace EyesOfTheDragonAndroid
 {
@@ -14,6 +16,7 @@ namespace EyesOfTheDragonAndroid
         public GameStateManager GameStateManager { get; private set; }
         public ITitleState TitleState { get; private set; }
         public IStartMenuState StartMenuState { get; private set; }
+        public IGamePlayState GamePlayState { get; private set; }
 
         public Android()
         {
@@ -30,6 +33,7 @@ namespace EyesOfTheDragonAndroid
 
             TitleState = new TitleState(this);
             StartMenuState = new StartMenuState(this);
+            GamePlayState = new GamePlayState(this);
         }
 
         protected override void Initialize()
