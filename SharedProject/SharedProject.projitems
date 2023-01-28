@@ -20,6 +20,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Controls\ControlManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Controls\Label.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Controls\LinkLabel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GamesScreens\IGamePlayState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GamesScreens\StartMenuState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GamesScreens\TitleState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GameState.cs" />
