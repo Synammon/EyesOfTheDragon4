@@ -5,9 +5,9 @@ using SharedProject;
 using SharedProject.GameScreens;
 using SharedProject.GamesScreens;
 
-namespace EyesOfTheDragonAndroid
+namespace EyesOfTheDragoniOS
 {
-    public class Android : Game
+    public class iOS : Game
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
@@ -16,7 +16,7 @@ namespace EyesOfTheDragonAndroid
         public IStartMenuState StartMenuState { get; private set; }
         public IGamePlayState GamePlayState { get; private set; }
 
-        public Android()
+        public iOS()
         {
             _graphics = new GraphicsDeviceManager(this);
 
@@ -54,16 +54,13 @@ namespace EyesOfTheDragonAndroid
 
         protected void FixedUpdate()
         {
-                _graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
-                _graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
-                _graphics.ApplyChanges();
+            _graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+            _graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+            _graphics.ApplyChanges();
         }
 
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
-
             // TODO: Add your update logic here
 
             base.Update(gameTime);
