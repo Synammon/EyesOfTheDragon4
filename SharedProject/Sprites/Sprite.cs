@@ -3,12 +3,13 @@ using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using RpgLibrary.Sprites;
 
 namespace SharedProject.Sprites
 {
     public enum Facing { Up, Down, Left, Right }
 
-    public abstract class Sprite
+    public abstract class Sprite : ISprite
     {
         protected float _speed;
         protected Vector2 _velocity;
@@ -20,7 +21,7 @@ namespace SharedProject.Sprites
         public Point Tile { get; set; }
 
         public int Width { get; set; }
-        public float Height { get; set; }
+        public int Height { get; set; }
 
         public float Speed
         {

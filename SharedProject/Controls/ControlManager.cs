@@ -46,7 +46,7 @@ namespace SharedProject.Controls
 
         #region Methods
 
-        public void Update(GameTime gameTime, PlayerIndex playerIndex)
+        public void Update(GameTime gameTime)
         {
             if (Count == 0)
                 return;
@@ -60,7 +60,7 @@ namespace SharedProject.Controls
 
                 if (c.HasFocus)
                 {
-                    c.HandleInput(playerIndex);
+                    c.HandleInput();
                 }
             }
 

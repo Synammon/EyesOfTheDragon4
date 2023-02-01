@@ -16,16 +16,19 @@
     <None Include="$(MSBuildThisFileDirectory)Content\Content.mgcb" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Controls\Button.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Controls\Control.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Controls\ControlManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Controls\Label.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Controls\LinkLabel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ExtensionMethods.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GamesScreens\GamePlayState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GamesScreens\IGamePlayState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GamesScreens\StartMenuState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GamesScreens\TitleState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GameState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GameStateManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Settings.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Sprites\AnimatedSprite.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Sprites\Animation.cs" />

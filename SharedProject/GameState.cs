@@ -68,7 +68,7 @@ namespace SharedProject
                     component.Update(gameTime);
             }
 
-            ControlManager.Update(gameTime, PlayerIndex.One);
+            ControlManager.Update(gameTime);
             base.Update(gameTime);
         }
 

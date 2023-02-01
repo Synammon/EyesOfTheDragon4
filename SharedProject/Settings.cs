@@ -14,5 +14,9 @@ namespace SharedProject
         public static Rectangle TargetRectangle { get { return new(0, 0, TargetWidth, TargetHeight); } }
         public static int TargetWidth { get; set; } = BaseWidth;
         public static int TargetHeight { get; set; } = BaseHeight;
+        public static Vector2 Scale 
+        { 
+            get { return new((float)TargetWidth / BaseWidth, (float)TargetHeight / BaseHeight);}         
+        }
     }
 }
