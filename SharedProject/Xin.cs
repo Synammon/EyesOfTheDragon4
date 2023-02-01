@@ -184,11 +184,29 @@ namespace SharedProject
                 (touchLocations[0].State == TouchLocationState.Moved));
         }
 
-        public static Vector2 TouchLocation
+        public static Vector2 TouchReleasedAt
         {
             get
             {
                 Vector2 result = Vector2.Zero;
+
+                if (touchLocations.Count > 0)
+                {
+                    if (touchLocations[0].State == TouchLocationState.Released)
+                    {
+                        result = touchLocations[0].Position;
+                    }
+                }
+
+                return result;
+            }
+        }
+
+        public static Vector2 TouchLocation
+        {
+            get
+            {
+                Vector2 result = Vector2.Zero - Vector2.One;
 
                 if (touchLocations.Count > 0)
                 {

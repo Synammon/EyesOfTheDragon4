@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RpgLibrary", "RpgLibrary\Rp
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "SharedProject", "SharedProject\SharedProject.shproj", "{A0CDBD0E-3A41-42B7-9425-A838BC2C7383}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EyesOfTheDragonAndroid", "EyesOfTheDragonAndroid\EyesOfTheDragonAndroid.csproj", "{BBBEDE5A-178C-40D7-81CB-9A9EA58F2EF6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EyesOfTheDragonAndroid", "EyesOfTheDragonAndroid\EyesOfTheDragonAndroid.csproj", "{BBBEDE5A-178C-40D7-81CB-9A9EA58F2EF6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EyesOfTheDragoniOS", "EyesOfTheDragoniOS\EyesOfTheDragoniOS.csproj", "{5E9415C7-E814-4609-8D05-29AD188AD857}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,6 +33,12 @@ Global
 		{BBBEDE5A-178C-40D7-81CB-9A9EA58F2EF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BBBEDE5A-178C-40D7-81CB-9A9EA58F2EF6}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BBBEDE5A-178C-40D7-81CB-9A9EA58F2EF6}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{5E9415C7-E814-4609-8D05-29AD188AD857}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E9415C7-E814-4609-8D05-29AD188AD857}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E9415C7-E814-4609-8D05-29AD188AD857}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{5E9415C7-E814-4609-8D05-29AD188AD857}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E9415C7-E814-4609-8D05-29AD188AD857}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E9415C7-E814-4609-8D05-29AD188AD857}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -39,6 +47,7 @@ Global
 		SolutionGuid = {ED567DB1-3AFE-4C57-B09F-A378E77686A8}
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		SharedProject\SharedProject.projitems*{5e9415c7-e814-4609-8d05-29ad188ad857}*SharedItemsImports = 5
 		SharedProject\SharedProject.projitems*{a0cdbd0e-3a41-42b7-9425-a838bc2c7383}*SharedItemsImports = 13
 		SharedProject\SharedProject.projitems*{a369cc52-448a-4689-9ced-1fef03afd676}*SharedItemsImports = 5
 		SharedProject\SharedProject.projitems*{bbbede5a-178c-40d7-81cb-9a9ea58f2ef6}*SharedItemsImports = 5
