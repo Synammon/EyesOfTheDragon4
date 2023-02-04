@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EyesOfTheDragonAndroid", "E
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EyesOfTheDragoniOS", "EyesOfTheDragoniOS\EyesOfTheDragoniOS.csproj", "{5E9415C7-E814-4609-8D05-29AD188AD857}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MapEditor", "MapEditor\MapEditor.csproj", "{CB7374C7-5F07-46A1-B353-274C9055CCB1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{5E9415C7-E814-4609-8D05-29AD188AD857}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5E9415C7-E814-4609-8D05-29AD188AD857}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5E9415C7-E814-4609-8D05-29AD188AD857}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{CB7374C7-5F07-46A1-B353-274C9055CCB1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CB7374C7-5F07-46A1-B353-274C9055CCB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CB7374C7-5F07-46A1-B353-274C9055CCB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CB7374C7-5F07-46A1-B353-274C9055CCB1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -51,5 +57,6 @@ Global
 		SharedProject\SharedProject.projitems*{a0cdbd0e-3a41-42b7-9425-a838bc2c7383}*SharedItemsImports = 13
 		SharedProject\SharedProject.projitems*{a369cc52-448a-4689-9ced-1fef03afd676}*SharedItemsImports = 5
 		SharedProject\SharedProject.projitems*{bbbede5a-178c-40d7-81cb-9a9ea58f2ef6}*SharedItemsImports = 5
+		SharedProject\SharedProject.projitems*{cb7374c7-5f07-46a1-b353-274c9055ccb1}*SharedItemsImports = 5
 	EndGlobalSection
 EndGlobal

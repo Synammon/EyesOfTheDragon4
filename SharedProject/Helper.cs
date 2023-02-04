@@ -11,5 +11,10 @@ namespace SharedProject
         {
             return new((int)vector2.X, (int)vector2.Y);
         }
+
+        public static Point V2P(Vector2 vector2)
+        {
+            return new((int)vector2.X, (int)vector2.Y);
+        }
     }
 }
