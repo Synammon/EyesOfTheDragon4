@@ -7,11 +7,17 @@ using System.Text;
 
 namespace SharedProject.Controls
 {
+    public class SelectedIndexEventArgs : EventArgs
+    {
+        public int Index;
+    }
+
     public class ListBox : Control
     {
         #region Event Region
 
-        public event EventHandler SelectionChanged;
+        public event EventHandler<SelectedIndexEventArgs> SelectionChanged;
+        public new event EventHandler<SelectedIndexEventArgs> Selected;
         public event EventHandler Enter;
         public event EventHandler Leave;
 
@@ -24,10 +30,11 @@ namespace SharedProject.Controls
         private int _startItem;
         private int _lineCount;
 
-        private readonly Texture2D _image;
+        private Texture2D _image;
+        private Texture2D _border;
         private readonly Texture2D _cursor;
 
-        private Color _selectedColor = Color.Red;
+        private Color _selectedColor = Color.White;
         private int _selectedItem;
         private readonly Button _upButton, _downButton;
         private double timer;
@@ -37,6 +44,8 @@ namespace SharedProject.Controls
         #endregion
 
         #region Property Region
+
+        public bool MouseOver => _mouseOver;
 
         public Color SelectedColor
         {
@@ -82,7 +91,7 @@ namespace SharedProject.Controls
 
         #region Constructor Region
 
-        public ListBox(Texture2D background, Texture2D downButton, Texture2D upButton, Texture2D cursor)
+        public ListBox(Texture2D background, Texture2D downButton, Texture2D upButton, Texture2D cursor, Texture2D border)
             : base()
         {
             HasFocus = false;
@@ -95,6 +104,8 @@ namespace SharedProject.Controls
             _downButton.Click += DownButton_Click;
 
             this._image = background;
+            this._border = border;
+
             this.Size = new Vector2(_image.Width, _image.Height);
             this._cursor = cursor;
 
@@ -104,21 +115,21 @@ namespace SharedProject.Controls
 
         private void DownButton_Click(object sender, EventArgs e)
         {
-            if (_selectedItem != _items.Count - 1 && timer > 0.1)
+            if (_selectedItem != _items.Count - 1 && timer > 0.5 )
             {
                 timer = 0;
                 _selectedItem++;
-                OnSelectionChanged(null);
+                OnSelectionChanged();
             }
         }
 
         private void UpButton_Click(object sender, EventArgs e)
         {
-            if (_selectedItem > 0 && timer > 0.1)
+            if (_selectedItem > 0 && timer > 0.5)
             {
                 timer = 0;
                 _selectedItem--;
-                OnSelectionChanged(null);
+                OnSelectionChanged();
             }
         }
 
@@ -132,15 +143,21 @@ namespace SharedProject.Controls
 
             _upButton.Update(gameTime);
             _downButton.Update(gameTime);
+            HandleInput();
         }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
             _lineCount = (int)(Size.Y / SpriteFont.LineSpacing);
+
             Rectangle d = new((int)Position.X, (int)Position.Y, (int)Size.X, (int)Size.Y);
+
+            spriteBatch.Draw(_border, d.Grow(1), Color.White);
+
             spriteBatch.Draw(_image, d, Color.White);
+
             Point position = Xin.MouseAsPoint;
-            Rectangle destination = new(0, 0, 100, (int)SpriteFont.LineSpacing);
+            Rectangle destination = new(0, 0, Bounds.Width - 40, (int)SpriteFont.LineSpacing);
             _mouseOver = false;
 
             for (int i = 0; i < _lineCount; i++)
@@ -160,7 +177,7 @@ namespace SharedProject.Controls
                 {
                     _mouseOver = true;
                     _selectedItem = _startItem + i;
-                    OnSelectionChanged(null);
+                    OnSelectionChanged();
                 }
 
                 float length = 0;
@@ -176,10 +193,16 @@ namespace SharedProject.Controls
 
                 if (_startItem + i == _selectedItem)
                 {
+                    Vector2 location = new(Position.X + 5, Position.Y + i * SpriteFont.LineSpacing + 2);
+                    spriteBatch.Draw(
+                        _cursor,
+                        Helper.NearestInt(location),
+                        Color.White);
+                    location.X += 5;
                     spriteBatch.DrawString(
                         SpriteFont,
                         text,
-                        new Vector2(Position.X + 3, Position.Y + i * SpriteFont.LineSpacing + 2),
+                        Helper.NearestInt(location),
                         SelectedColor);
                 }
                 else
@@ -187,13 +210,13 @@ namespace SharedProject.Controls
                     spriteBatch.DrawString(
                         SpriteFont,
                         text,
-                        new Vector2(Position.X + 3, Position.Y + i * SpriteFont.LineSpacing + 2),
+                        Helper.NearestInt(new Vector2(Position.X + 8, Position.Y + i * SpriteFont.LineSpacing + 2)),
                         Color);
                 }
             }
 
-            _upButton.Position = new(Position.X + Size.X - _upButton.Width, Position.Y);
-            _downButton.Position = new(Position.X + Size.X - _downButton.Width, Position.Y + Size.Y - _downButton.Height);
+            _upButton.Position = new((int)(Position.X + Size.X - _upButton.Width), (int)Position.Y);
+            _downButton.Position = new((int)(Position.X + Size.X - _downButton.Width), (int)(Position.Y + Size.Y - _downButton.Height));
 
             _upButton.Draw(spriteBatch);
             _downButton.Draw(spriteBatch);
@@ -201,13 +224,9 @@ namespace SharedProject.Controls
 
         public override void HandleInput()
         {
-            if (!HasFocus)
+            if (Xin.WasKeyReleased(Keys.Down) && HasFocus && timer > 0.5)
             {
-                return;
-            }
-
-            if (Xin.WasKeyReleased(Keys.Down))
-            {
+                timer = 0;
                 if (_selectedItem < _items.Count - 1)
                 {
                     _selectedItem++;
@@ -217,11 +236,12 @@ namespace SharedProject.Controls
                         _startItem = _selectedItem - _lineCount + 1;
                     }
 
-                    OnSelectionChanged(null);
+                    OnSelectionChanged();
                 }
             }
-            else if (Xin.WasKeyReleased(Keys.Up))
+            else if (Xin.WasKeyReleased(Keys.Up) && HasFocus && timer > 0.5)
             {
+                timer = 0;
                 if (_selectedItem > 0)
                 {
                     _selectedItem--;
@@ -231,18 +251,22 @@ namespace SharedProject.Controls
                         _startItem = _selectedItem;
                     }
 
-                    OnSelectionChanged(null);
+                    OnSelectionChanged();
                 }
             }
-            if (Xin.WasMouseReleased(MouseButtons.Left) && _mouseOver)
+
+            if (Xin.WasMouseReleased(MouseButtons.Left) && _mouseOver && timer > 0.5)
             {
+                timer = 0;
                 HasFocus = true;
-                OnSelectionChanged(null);
+                OnSelected();
             }
-            if (Xin.WasKeyReleased(Keys.Enter))
+
+            if (Xin.WasKeyReleased(Keys.Enter) && timer > 0.5)
             {
-                HasFocus = false;
-                OnSelected(null);
+                timer= 0;
+                HasFocus = true;
+                OnSelected();
             }
 
             if (Xin.WasKeyReleased(Keys.Escape))
@@ -256,8 +280,22 @@ namespace SharedProject.Controls
 
         #region Method Region
 
-        protected virtual void OnSelectionChanged(EventArgs e)
+        public virtual void OnSelected()
         {
+            var e = new SelectedIndexEventArgs()
+            {
+                Index = _selectedItem,
+            };
+
+            Selected?.Invoke(this, e);
+        }
+        protected virtual void OnSelectionChanged()
+        {
+            var e = new SelectedIndexEventArgs()
+            {
+                Index = _selectedItem,
+            };
+
             SelectionChanged?.Invoke(this, e);
         }
 
