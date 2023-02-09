@@ -53,17 +53,21 @@ namespace SharedProject.Controls
             _controls = new((Game.Content.Load<SpriteFont>("Fonts/MainFont")));
 
             TitleBar = new(
+                GraphicsDevice,
                 Game.Content.Load<Texture2D>("GUI/TitleBar"),
                 new(0, 0, Size.X, 20));
 
             Background = new(
+                GraphicsDevice,
                 Game.Content.Load<Texture2D>("GUI/Form"),
                 new(
                     0,
-                    20,
+                    0,
                     Bounds.Width,
                     Bounds.Height))
             { FillMethod = FillMethod.Fill };
+
+            Background.Image.Fill(Color.Wheat);
 
             CloseButton = new(
                 Game.Content.Load<Texture2D>("GUI/CloseButton"),
@@ -76,6 +80,7 @@ namespace SharedProject.Controls
             {
                 TitleBar.Height = 0;
                 Background.Position = new();
+                Background.Width = _graphicsDevice.PreferredBackBufferWidth;
                 Background.Height = _graphicsDevice.PreferredBackBufferHeight;
             }
         }
@@ -105,7 +110,7 @@ namespace SharedProject.Controls
             if (!FullScreen)
             {
                 Vector2 size = ControlManager.SpriteFont.MeasureString(Title);
-                Vector2 position = new((Bounds.Width - size.X) / 2, 0);
+                Vector2 position = Helper.NearestInt(new((Bounds.Width - size.X) / 2, 0));
                 Label label = new()
                 {
                     Text = _title,
@@ -113,9 +118,7 @@ namespace SharedProject.Controls
                     Position = position
                 };
 
-                Matrix m = Matrix.CreateTranslation(new Vector3(Position, 0));
-
-                SpriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend, SamplerState.AnisotropicWrap, null, null, null, m);
+                SpriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend, SamplerState.AnisotropicWrap);
 
                 Background.Draw(SpriteBatch);
                 TitleBar.Draw(SpriteBatch);
@@ -132,9 +135,7 @@ namespace SharedProject.Controls
 
                 SpriteBatch.End();
 
-                m = Matrix.CreateTranslation(new Vector3(0, 20, 0) + new Vector3(Position, 0));
-
-                SpriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend, SamplerState.AnisotropicWrap, null, null, null, m);
+                SpriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend, SamplerState.AnisotropicWrap);
 
                 _controls.Draw(SpriteBatch);
 
@@ -149,7 +150,7 @@ namespace SharedProject.Controls
                     0,
                     _graphicsDevice.PreferredBackBufferWidth,
                     _graphicsDevice.PreferredBackBufferHeight);
-
+                Background.Draw(SpriteBatch);
                 _controls.Draw(SpriteBatch);
 
                 SpriteBatch.End();

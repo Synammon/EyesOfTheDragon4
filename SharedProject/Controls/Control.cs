@@ -107,6 +107,8 @@ namespace SharedProject.Controls
             set { type = value; }
         }
 
+        public Vector2 Offset { get; set; }
+
         #endregion
 
         #region Constructor Region

@@ -10,18 +10,23 @@ namespace SharedProject.Controls
     public class TextBox : Control
     {
         private readonly Texture2D _background;
+        private readonly Texture2D _border;
         private readonly Texture2D _caret;
         private double timer;
         private Color _tint;
         private readonly List<string> validChars = new();
+        public bool ReadOnly { get; set; }
 
-        public TextBox(Texture2D background, Texture2D caret)
+        public TextBox(Texture2D background, Texture2D caret, Texture2D brdr)
             : base()
         {
             Text = "";
             _background = background;
+            _border = brdr;
             _caret = caret;
             _tint = Color.Black;
+
+            ReadOnly = false;
 
             foreach (char c in "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTWXYZ0123456789 -_".ToCharArray())
             {
@@ -33,7 +38,14 @@ namespace SharedProject.Controls
         {
             Vector2 dimensions = ControlManager.SpriteFont.MeasureString(Text);
             dimensions.Y = 0;
-            spriteBatch.Draw(_background, Position, Color.White);
+            spriteBatch.Draw(_border, 
+                             new Rectangle(Helper.V2P(Position), Helper.V2P(Size)).Grow(1), 
+                             Color.White);
+            spriteBatch.Draw(_background,
+                             new Rectangle(
+                                 Helper.V2P(Position), 
+                                 Helper.V2P(Size)),
+                             Color.White);
             spriteBatch.DrawString(
                 ControlManager.SpriteFont,
                 Text,
@@ -46,7 +58,7 @@ namespace SharedProject.Controls
                 1f);
             spriteBatch.Draw(
                 _caret,
-                Position + dimensions + Vector2.One * 5,
+                Helper.NearestInt(Position + dimensions + Vector2.One * 5),
                 _tint);
         }
 

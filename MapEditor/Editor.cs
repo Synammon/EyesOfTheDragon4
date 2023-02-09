@@ -18,8 +18,8 @@ namespace MapEditor
         {
             _graphics = new(this)
             {
-                PreferredBackBufferWidth = 1920,
-                PreferredBackBufferHeight = 1080
+                PreferredBackBufferWidth = 1900,
+                PreferredBackBufferHeight = 1000
             };
 
             _graphics.ApplyChanges();
@@ -50,7 +50,7 @@ namespace MapEditor
             Services.AddService<SpriteBatch>(_spriteBatch);
 
             // TODO: use this.Content to load your game content here
-            MainForm = new(this, Vector2.Zero, new(1920, 1080))
+            MainForm = new(this, Vector2.Zero, new(1900, 1000))
             {
                 FullScreen= false,
             };

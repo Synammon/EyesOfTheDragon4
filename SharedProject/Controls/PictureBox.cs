@@ -13,6 +13,7 @@ namespace SharedProject.Controls
         #region Field Region
 
         private Texture2D _image;
+        private readonly Texture2D _border;
         private Rectangle _sourceRect;
         private Rectangle _destRect;
         private FillMethod _fillMethod;
@@ -63,9 +64,12 @@ namespace SharedProject.Controls
 
         #region Constructors
 
-        public PictureBox(Texture2D image, Rectangle destination)
+        public PictureBox(GraphicsDevice GraphicsDevice, Texture2D image, Rectangle destination)
         {
             Image = image;
+
+            _border = new Texture2D(GraphicsDevice, image.Width, image.Height);
+            _border.Fill(Color.Black);
 
             DestinationRectangle = destination;
 
@@ -92,8 +96,8 @@ namespace SharedProject.Controls
             }
         }
 
-        public PictureBox(Texture2D image, Rectangle destination, Rectangle source)
-            : this(image, destination)
+        public PictureBox(GraphicsDevice GraphicsDevice, Texture2D image, Rectangle destination, Rectangle source)
+            : this(GraphicsDevice, image, destination)
         {
             SourceRectangle = source;
             Color = Color.White;
@@ -121,6 +125,10 @@ namespace SharedProject.Controls
 
         public override void Draw(SpriteBatch spriteBatch)
         {
+            Rectangle borderDest = DestinationRectangle.Grow(1);
+
+            spriteBatch.Draw(_border, borderDest, Color.White);
+
             if (_image != null)
             {
                 switch (_fillMethod)
@@ -137,6 +145,7 @@ namespace SharedProject.Controls
                         {
                             _sourceRect.Height = DestinationRectangle.Height;
                         }
+                        
                         spriteBatch.Draw(Image, DestinationRectangle, SourceRectangle, Color);
                         break;
                     case FillMethod.Clip:
@@ -149,11 +158,12 @@ namespace SharedProject.Controls
                         {
                             _destRect.Height = DestinationRectangle.Height;
                         }
-                        spriteBatch.Draw(Image, DestinationRectangle, SourceRectangle, Color);
+
+                        spriteBatch.Draw(Image, _destRect.Grow(-10), SourceRectangle, Color);
                         break;
                     case FillMethod.Fill:
                         _sourceRect = new(0, 0, Image.Width, Image.Height);
-                        spriteBatch.Draw(Image, DestinationRectangle, null, Color);
+                        spriteBatch.Draw(Image, DestinationRectangle.Grow(-1), null, Color);
                         break;
                     case FillMethod.Center:
                         _sourceRect.Width = Image.Width;
@@ -180,6 +190,7 @@ namespace SharedProject.Controls
                         {
                             dest.Y = DestinationRectangle.Y + (Height - Image.Height) / 2;
                         }
+                        dest = dest.Grow(-1);
                         spriteBatch.Draw(Image, dest, SourceRectangle, Color);
                         break;
                 }
