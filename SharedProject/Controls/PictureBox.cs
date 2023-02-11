@@ -159,11 +159,11 @@ namespace SharedProject.Controls
                             _destRect.Height = DestinationRectangle.Height;
                         }
 
-                        spriteBatch.Draw(Image, _destRect.Grow(-10), SourceRectangle, Color);
+                        spriteBatch.Draw(Image, _destRect, SourceRectangle, Color);
                         break;
                     case FillMethod.Fill:
                         _sourceRect = new(0, 0, Image.Width, Image.Height);
-                        spriteBatch.Draw(Image, DestinationRectangle.Grow(-1), null, Color);
+                        spriteBatch.Draw(Image, DestinationRectangle, null, Color);
                         break;
                     case FillMethod.Center:
                         _sourceRect.Width = Image.Width;
@@ -190,7 +190,6 @@ namespace SharedProject.Controls
                         {
                             dest.Y = DestinationRectangle.Y + (Height - Image.Height) / 2;
                         }
-                        dest = dest.Grow(-1);
                         spriteBatch.Draw(Image, dest, SourceRectangle, Color);
                         break;
                 }

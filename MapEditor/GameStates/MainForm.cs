@@ -67,18 +67,6 @@ namespace MapEditor.GameStates
                 this.Visible = true;
             }
 
-            if (Xin.WasKeyReleased(Microsoft.Xna.Framework.Input.Keys.P))
-            {
-                MessageForm frm = new(Game, new(100, 100), new(200, 100), "My message!", true)
-                {
-                    Visible = true,
-                    Color = Color.Black,
-                    Message = "My message!"
-                };
-
-                frm.Message = "My message!";
-                StateManager.PushState(frm);
-            }
             base.Update(gameTime);
         }
 
@@ -90,29 +78,6 @@ namespace MapEditor.GameStates
         protected override void Show()
         {
             base.Show();
-
-            if (fileForm != null)
-            {
-                if (fileForm.Visible)
-                {
-                    if (fileForm.Role == FileFormRole.Open)
-                    {
-
-                    }
-                    else if (fileForm.Role == FileFormRole.Create)
-                    {
-
-                    }
-                    else if (fileForm.Role == FileFormRole.Save)
-                    {
-
-                    }
-                    else if (fileForm.Role == FileFormRole.Directory)
-                    {
-
-                    }
-                }
-            }
         }
     }
 }
