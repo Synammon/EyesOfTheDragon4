@@ -289,6 +289,7 @@ namespace SharedProject.Controls
 
             Selected?.Invoke(this, e);
         }
+
         protected virtual void OnSelectionChanged()
         {
             var e = new SelectedIndexEventArgs()

@@ -81,6 +81,28 @@ namespace SharedProject.GameScreens
                 IsActive = true,
                 IsAnimating = true,
             };
+
+            texture = Game.Content.Load<Texture2D>(@"PlayerSprites/femalefighter");
+
+            AnimatedSprite rio = new(texture, animations) 
+            { 
+                CurrentAnimation = "walkdown",
+                IsAnimating = true,
+            };
+
+            CharacterLayer chars = new();
+
+            chars.Characters.Add(
+                new Character("Rio", rio, "femalefighter") 
+                { 
+                    Position = new(320, 320),
+                    Tile = new(10, 10),
+                    Visible= true,
+                    Enabled=true,
+                });
+
+            map.AddLayer(chars);
+
             rightButton = new(Game.Content.Load<Texture2D>("GUI/g21245"), ButtonRole.Menu)
             {
                 Position = new(80, Settings.BaseHeight - 80),
@@ -212,6 +234,9 @@ namespace SharedProject.GameScreens
         {
             ControlManager.Update(gameTime);
 
+            sprite.Update(gameTime);
+            map.Update(gameTime);
+
             if (Xin.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.A) && !inMotion)
             {
                 MoveLeft();
@@ -261,12 +286,18 @@ namespace SharedProject.GameScreens
                 sprite.Position = new((int)sprite.Position.X, (int)sprite.Position.Y);
                 return;
             }
+
+            if (map.PlayerCollides(nextPotition))
+            {
+                inMotion = false;
+                motion = Vector2.Zero;
+                return;
+            }
+
             sprite.Position = newPosition;
             sprite.Tile = Engine.VectorToCell(newPosition);
 
             camera.LockToSprite(sprite, map);
-
-            sprite.Update(gameTime);
 
             base.Update(gameTime);
         }
