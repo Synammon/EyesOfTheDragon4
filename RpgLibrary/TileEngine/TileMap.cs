@@ -112,6 +112,10 @@ namespace RpgLibrary.TileEngine
                 {
                     layer1.Draw(spriteBatch, camera, _tilesets);
                 }
+                else if (layer is CharacterLayer characters)
+                {
+                    characters.Draw(spriteBatch, camera, _tilesets);
+                }
             }
         }
 
@@ -126,6 +130,27 @@ namespace RpgLibrary.TileEngine
 
             foreach (ILayer layer in layers)
                 _mapLayers.Add(layer);
+        }
+
+        public bool PlayerCollides(Rectangle nextPotition)
+        {
+            CharacterLayer layer = _mapLayers.Where(x => x is CharacterLayer).FirstOrDefault() as CharacterLayer;
+
+            if (layer != null)
+            {
+                foreach (var character in layer.Characters)
+                {
+                    Rectangle rectangle = new(
+                        new(character.Tile.X * Engine.TileWidth, character.Tile.Y * Engine.TileHeight), 
+                        new(Engine.TileWidth, Engine.TileHeight));
+                    if (rectangle.Intersects(nextPotition))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
         }
     }
 }
