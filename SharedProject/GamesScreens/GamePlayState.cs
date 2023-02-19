@@ -6,6 +6,7 @@ using SharedProject;
 using SharedProject.Controls;
 using SharedProject.GamesScreens;
 using SharedProject.Sprites;
+using SharedProject.StateManagement;
 using System;
 using System.Collections.Generic;
 using System.Reflection.Metadata;
@@ -253,6 +254,11 @@ namespace SharedProject.GameScreens
             else if (Xin.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.S) && !inMotion)
             {
                 MoveDown();
+            }
+            else if (Xin.WasKeyReleased(Microsoft.Xna.Framework.Input.Keys.C))
+            {
+                StateManager.PushState((GameState)Game.Services.GetService<IConversationState>());
+                ((ConversationState)Game.Services.GetService<IConversationState>()).StartConversation();
             }
 
             if (motion != Vector2.Zero)

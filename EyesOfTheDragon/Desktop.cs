@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using SharedProject;
 using SharedProject.GameScreens;
 using SharedProject.GamesScreens;
+using SharedProject.StateManagement;
 
 namespace EyesOfTheDragon
 {
@@ -15,6 +16,7 @@ namespace EyesOfTheDragon
         public ITitleState TitleState { get; private set; }
         public IStartMenuState StartMenuState { get; private set; }
         public IGamePlayState GamePlayState { get; private set; }
+        public IConversationState ConversationState { get; private set; }
 
         public Desktop()
         {
@@ -36,6 +38,7 @@ namespace EyesOfTheDragon
             TitleState = new TitleState(this);
             StartMenuState = new StartMenuState(this);
             GamePlayState = new GamePlayState(this);
+            ConversationState = new ConversationState(this);
         }
 
         protected override void Initialize()

@@ -26,7 +26,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Controls\ListBox.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Controls\PictureBox.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Controls\TextBox.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ConversationComponents\Conversation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ConversationComponents\GameScene.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExtensionMethods.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GamesScreens\ConversationState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GamesScreens\GamePlayState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GamesScreens\IGamePlayState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GamesScreens\StartMenuState.cs" />
@@ -34,6 +37,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)GameState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GameStateManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Player.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Settings.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Sprites\AnimatedSprite.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Sprites\Animation.cs" />

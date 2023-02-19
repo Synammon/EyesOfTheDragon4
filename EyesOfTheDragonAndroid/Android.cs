@@ -4,17 +4,19 @@ using Microsoft.Xna.Framework.Input;
 using SharedProject;
 using SharedProject.GameScreens;
 using SharedProject.GamesScreens;
+using SharedProject.StateManagement;
 
-namespace EyesOfTheDragonAndroid
+namespace EyesOfTheDragon
 {
     public class Android : Game
     {
-        private GraphicsDeviceManager _graphics;
+        private readonly GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         public GameStateManager GameStateManager { get; private set; }
         public ITitleState TitleState { get; private set; }
         public IStartMenuState StartMenuState { get; private set; }
         public IGamePlayState GamePlayState { get; private set; }
+        public IConversationState ConversationState { get; private set; }
 
         public Android()
         {
@@ -22,6 +24,10 @@ namespace EyesOfTheDragonAndroid
 
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
+
+            _graphics.PreferredBackBufferWidth = Settings.BaseWidth;
+            _graphics.PreferredBackBufferHeight = Settings.BaseHeight;
+            _graphics.ApplyChanges();
 
             Components.Add(new Xin(this));
 
@@ -32,6 +38,7 @@ namespace EyesOfTheDragonAndroid
             TitleState = new TitleState(this);
             StartMenuState = new StartMenuState(this);
             GamePlayState = new GamePlayState(this);
+            ConversationState = new ConversationState(this);
         }
 
         protected override void Initialize()
@@ -50,13 +57,6 @@ namespace EyesOfTheDragonAndroid
 
             Services.AddService(typeof(SpriteBatch), _spriteBatch);
             GameStateManager.PushState((TitleState)TitleState);
-        }
-
-        protected void FixedUpdate()
-        {
-                _graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
-                _graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
-                _graphics.ApplyChanges();
         }
 
         protected override void Update(GameTime gameTime)

@@ -26,6 +26,8 @@ namespace SharedProject.Controls
         public int Width { get { return _background.Width; } }
         public int Height { get { return _background.Height; } }
 
+        public int? Index { get; set; }
+
         #endregion
 
         #region Property Region
