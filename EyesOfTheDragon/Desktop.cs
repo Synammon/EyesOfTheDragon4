@@ -17,6 +17,9 @@ namespace EyesOfTheDragon
         public IStartMenuState StartMenuState { get; private set; }
         public IGamePlayState GamePlayState { get; private set; }
         public IConversationState ConversationState { get; private set; }
+        
+        public IConversationManager ConversationManager { get; private set; }
+        public Player Player { get; private set; }
 
         public Desktop()
         {
@@ -34,11 +37,6 @@ namespace EyesOfTheDragon
             GameStateManager = new GameStateManager(this);
             Components.Add(GameStateManager);
             Services.AddService(typeof(GameStateManager), GameStateManager);
-
-            TitleState = new TitleState(this);
-            StartMenuState = new StartMenuState(this);
-            GamePlayState = new GamePlayState(this);
-            ConversationState = new ConversationState(this);
         }
 
         protected override void Initialize()
@@ -56,6 +54,16 @@ namespace EyesOfTheDragon
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             Services.AddService(typeof(SpriteBatch), _spriteBatch);
+
+            ConversationManager = new ConversationManager(this);
+            Components.Add((ConversationManager)ConversationManager);
+            ConversationManager.LoadConversations(this);
+
+            TitleState = new TitleState(this);
+            StartMenuState = new StartMenuState(this);
+            GamePlayState = new GamePlayState(this);
+            ConversationState = new ConversationState(this);
+
             GameStateManager.PushState((TitleState)TitleState);
         }
 
