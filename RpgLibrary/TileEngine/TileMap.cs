@@ -40,6 +40,8 @@ namespace RpgLibrary.TileEngine
             get { return _mapHeight * Engine.TileHeight; }
         }
 
+        public List<ILayer> Layers { get { return _mapLayers; } }
+
         #endregion
 
         #region Constructor Region

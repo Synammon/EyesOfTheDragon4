@@ -1,14 +1,18 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Rpglibrary.TileEngine;
+using RpgLibrary.Characters;
 using RpgLibrary.TileEngine;
 using SharedProject;
+using SharedProject.Characters;
 using SharedProject.Controls;
 using SharedProject.GamesScreens;
 using SharedProject.Sprites;
 using SharedProject.StateManagement;
+using SharpFont.Cache;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection.Metadata;
 using System.Security.Cryptography;
 using System.Text;
@@ -27,6 +31,12 @@ namespace SharedProject.GameScreens
         private Rectangle collision = new();
         private float speed;
         private Vector2 motion;
+
+        public Player Player { get; private set; }
+
+        private IConversationManager _conversationManager;
+        private IConversationState _conversationState;
+
         public GamePlayState(Game game) : base(game)
         {
             Game.Services.AddService<IGamePlayState>(this);
@@ -43,112 +53,118 @@ namespace SharedProject.GameScreens
             base.Initialize();
         }
 
-        protected override void LoadContent()
+    protected override void LoadContent()
+    {
+        base.LoadContent();
+
+        Player = (Player)Game.Services.GetService<IPlayer>();
+
+        _conversationState = Game.Services.GetService<IConversationState>();
+        _conversationManager = Game.Services.GetService<IConversationManager>();
+
+        renderTarget = new(GraphicsDevice, Settings.BaseWidth, Settings.BaseHeight);
+
+        Texture2D texture = Game.Content.Load<Texture2D>(@"Tiles/tileset1");
+
+        List<Tileset> tilesets = new()
         {
-            base.LoadContent();
+            new(texture, 8, 8, 32, 32),
+        };
 
-            renderTarget = new(GraphicsDevice, Settings.BaseWidth, Settings.BaseHeight);
+        TileLayer layer = new(100, 100);
 
-            Texture2D texture = Game.Content.Load<Texture2D>(@"Tiles/tileset1");
+        map = new("test", tilesets[0], layer);
 
-            List<Tileset> tilesets = new()
-            {
-                new(texture, 8, 8, 32, 32),
-            };
+        Dictionary<string, Animation> animations = new();
 
-            TileLayer layer = new(100, 100);
+        Animation animation = new(3, 32, 32, 0, 0) { CurrentFrame = 0, FramesPerSecond = 8 };
+        animations.Add("walkdown", animation);
 
-            map = new("test", tilesets[0], layer);
+        animation = new(3, 32, 32, 0, 32) { CurrentFrame = 0, FramesPerSecond = 8 };
+        animations.Add("walkleft", animation);
 
-            Dictionary<string, Animation> animations = new();
+        animation = new(3, 32, 32, 0, 64) { CurrentFrame = 0, FramesPerSecond = 8 };
+        animations.Add("walkright", animation);
 
-            Animation animation = new(3, 32, 32, 0, 0) { CurrentFrame = 0, FramesPerSecond = 8 };
-            animations.Add("walkdown", animation);
+        animation = new(3, 32, 32, 0, 96) { CurrentFrame = 0, FramesPerSecond = 8 };
+        animations.Add("walkup", animation);
 
-            animation = new(3, 32, 32, 0, 32) { CurrentFrame = 0, FramesPerSecond = 8 };
-            animations.Add("walkleft", animation);
+        texture = Game.Content.Load<Texture2D>(@"PlayerSprites/femalepriest");
 
-            animation = new(3, 32, 32, 0, 64) { CurrentFrame = 0, FramesPerSecond = 8 };
-            animations.Add("walkright", animation);
+        sprite = new(texture, animations)
+        {
+            CurrentAnimation = "walkdown",
+            IsActive = true,
+            IsAnimating = true,
+        };
 
-            animation = new(3, 32, 32, 0, 96) { CurrentFrame = 0, FramesPerSecond = 8 };
-            animations.Add("walkup", animation);
+        texture = Game.Content.Load<Texture2D>(@"PlayerSprites/femalefighter");
 
-            texture = Game.Content.Load<Texture2D>(@"PlayerSprites/femalepriest");
+        AnimatedSprite rio = new(texture, animations) 
+        { 
+            CurrentAnimation = "walkdown",
+            IsAnimating = true,
+        };
 
-            sprite = new(texture, animations)
-            {
-                CurrentAnimation = "walkdown",
-                IsActive = true,
-                IsAnimating = true,
-            };
+        CharacterLayer chars = new();
 
-            texture = Game.Content.Load<Texture2D>(@"PlayerSprites/femalefighter");
-
-            AnimatedSprite rio = new(texture, animations) 
+        chars.Characters.Add(
+            new Villager(rio, new(10, 10)) 
             { 
-                CurrentAnimation = "walkdown",
-                IsAnimating = true,
-            };
+                Position = new(320, 320),
+                Tile = new(10, 10),
+                Visible= true,
+                Enabled=true,
+                Conversation="Rio"
+            });
 
-            CharacterLayer chars = new();
+        map.AddLayer(chars);
 
-            chars.Characters.Add(
-                new Character("Rio", rio, "femalefighter") 
-                { 
-                    Position = new(320, 320),
-                    Tile = new(10, 10),
-                    Visible= true,
-                    Enabled=true,
-                });
+        rightButton = new(Game.Content.Load<Texture2D>("GUI/g21245"), ButtonRole.Menu)
+        {
+            Position = new(80, Settings.BaseHeight - 80),
+            Size = new(32, 32),
+            Text = "",
+            Color = Color.White,
+        };
 
-            map.AddLayer(chars);
+        rightButton.Down += RightButton_Down;
+        ControlManager.Add(rightButton);
 
-            rightButton = new(Game.Content.Load<Texture2D>("GUI/g21245"), ButtonRole.Menu)
-            {
-                Position = new(80, Settings.BaseHeight - 80),
-                Size = new(32, 32),
-                Text = "",
-                Color = Color.White,
-            };
+        upButton = new(Game.Content.Load<Texture2D>("GUI/g21263"), ButtonRole.Menu)
+        {
+            Position = new(48, Settings.BaseHeight - 48 - 64),
+            Size = new(32, 32),
+            Text = "",
+            Color = Color.White,
+        };
 
-            rightButton.Down += RightButton_Down;
-            ControlManager.Add(rightButton);
+        upButton.Down += UpButton_Down;
+        ControlManager.Add(upButton);
 
-            upButton = new(Game.Content.Load<Texture2D>("GUI/g21263"), ButtonRole.Menu)
-            {
-                Position = new(48, Settings.BaseHeight - 48 - 64),
-                Size = new(32, 32),
-                Text = "",
-                Color = Color.White,
-            };
+        downButton = new(Game.Content.Load<Texture2D>("GUI/g21272"), ButtonRole.Menu)
+        {
+            Position = new(48, Settings.BaseHeight - 48),
+            Size = new(32, 32),
+            Text = "",
+            Color = Color.White,
+        };
 
-            upButton.Down += UpButton_Down;
-            ControlManager.Add(upButton);
+        downButton.Down += DownButton_Down;
+        ControlManager.Add(downButton);
 
-            downButton = new(Game.Content.Load<Texture2D>("GUI/g21272"), ButtonRole.Menu)
-            {
-                Position = new(48, Settings.BaseHeight - 48),
-                Size = new(32, 32),
-                Text = "",
-                Color = Color.White,
-            };
+        leftButton = new(Game.Content.Load<Texture2D>("GUI/g22987"), ButtonRole.Menu)
+        {
+            Position = new(16, Settings.BaseHeight - 80),
+            Size = new(32, 32),
+            Text = "",
+            Color = Color.White,
+        };
 
-            downButton.Down += DownButton_Down;
-            ControlManager.Add(downButton);
+        leftButton.Down += LeftButton_Down;
 
-            leftButton = new(Game.Content.Load<Texture2D>("GUI/g22987"), ButtonRole.Menu)
-            {
-                Position = new(16, Settings.BaseHeight - 80),
-                Size = new(32, 32),
-                Text = "",
-                Color = Color.White,
-            };
-
-            leftButton.Down += LeftButton_Down;
-
-            ControlManager.Add(leftButton);
-        }
+        ControlManager.Add(leftButton);
+    }
 
         private void LeftButton_Down(object sender, EventArgs e)
         {
@@ -255,10 +271,10 @@ namespace SharedProject.GameScreens
             {
                 MoveDown();
             }
-            else if (Xin.WasKeyReleased(Microsoft.Xna.Framework.Input.Keys.C))
+
+            if (Xin.WasKeyReleased(Microsoft.Xna.Framework.Input.Keys.F) && !inMotion)
             {
-                StateManager.PushState((GameState)Game.Services.GetService<IConversationState>());
-                ((ConversationState)Game.Services.GetService<IConversationState>()).StartConversation();
+                HandleConversation();
             }
 
             if (motion != Vector2.Zero)
@@ -306,6 +322,31 @@ namespace SharedProject.GameScreens
             camera.LockToSprite(sprite, map);
 
             base.Update(gameTime);
+        }
+
+        private void HandleConversation()
+        {
+            var layer = map.Layers.FirstOrDefault(x => x is CharacterLayer);
+
+            if (layer is CharacterLayer characterLayer)
+            {
+                foreach (ICharacter c in characterLayer.Characters)
+                {
+                    if (c.Tile.X == sprite.Tile.X && Math.Abs(sprite.Tile.Y - c.Tile.Y) == 1 ||
+                        (c.Tile.Y == sprite.Tile.Y && Math.Abs(sprite.Tile.X - c.Tile.X) == 1))
+                    {
+                        if (c is Villager villager)
+                        {
+                            _conversationState.SetConversation(Player, villager.Conversation);
+                            StateManager.PushState((ConversationState)_conversationState);
+                            //Conversation conversation = (Conversation)_conversationManager.GetConversation(villager.Conversation);
+                            //if (conversation != null)
+                            //{
+                            //}
+                        }
+                    }
+                }
+            }
         }
 
         public override void Draw(GameTime gameTime)

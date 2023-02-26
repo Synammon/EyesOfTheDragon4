@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using RpgLibrary.ConversationComponents;
 using SharedProject.Controls;
+using SharpFont.Cache;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,13 +13,15 @@ namespace SharedProject.StateManagement
     public interface IConversationState
     {
         GameState GameState { get; }
+        void SetConversation(Player player, string conversation);
+        void StartConversation();
     }
 
     public class ConversationState : GameState, IConversationState
     {
-        private Conversation conversation;
+        private IConversationManager _conversations;
         private Player player;
-
+        private Conversation _conversation;
         public GameState GameState => this;
         public RenderTarget2D RenderTarget { get; set; }
 
@@ -26,39 +29,8 @@ namespace SharedProject.StateManagement
             : base(game)
         {
             Game.Services.AddService<IConversationState>(this);
-
-            conversation = new();
-
-            SceneAction action = new()
-            {
-                Action = ActionType.Talk,
-                Parameter = "Help"
-            };
-
-            List<SceneOption> options = new()
-            {
-                new SceneOption("Help!", "Help", action)
-            };
-
-            action = new()
-            {
-                Action = ActionType.End,
-                Parameter = ""
-            };
-
-            options.Add(new("Goodbye.", "Goodbye", action));
-
-            GameScene scene = new(game, "Oh no! The unthinkable has happened! A thief has stolen Greynar's eyes. With out them he will not be able to animated and defend us. You have to do something or the monsters outside the village will crush us.", options);
-            conversation.AddScene("Hello", scene);
-
-            options = new();
-            options.Add(new("Goodbye.", "Gooodbye", new() { Action = ActionType.End, Parameter = "" }));
-
-            scene = new(game, "Oh thank the heavens for you!", options);
-            conversation.AddScene("Help", scene);
-
-            conversation.FirstScene = "Hello";
-            conversation.StartConversation();
+            _conversations = Game.Services.GetService<IConversationManager>();
+            _conversation = new();
         }
 
         public override void Initialize()
@@ -70,7 +42,9 @@ namespace SharedProject.StateManagement
         {
             base.LoadContent();
 
-            foreach (GameScene scene in conversation.Scenes.Values)
+            RenderTarget = new(GraphicsDevice, Settings.TargetWidth, Settings.TargetHeight);
+
+            foreach (GameScene scene in _conversation.Scenes.Values)
             {
                 scene.ItemSelected += Scene_ItemSelected;
             }
@@ -86,14 +60,14 @@ namespace SharedProject.StateManagement
                     StateManager.PopState();
                     break;
                 case ActionType.Talk:
-                    conversation.ChangeScene(btn.Action.Parameter);
+                    _conversation.ChangeScene(btn.Action.Parameter);
                     break;
             }
         }
 
         public override void Update(GameTime gameTime)
         {
-            conversation.Update(gameTime);
+            _conversation.Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -105,17 +79,18 @@ namespace SharedProject.StateManagement
             GraphicsDevice.Clear(Color.Transparent);
 
             SpriteBatch.Begin();
-          
+
             base.Draw(gameTime);
 
-            conversation.Draw(gameTime, SpriteBatch);
+            _conversation.Draw(gameTime, SpriteBatch);
 
             SpriteBatch.End();
 
             GraphicsDevice.SetRenderTarget(null);
+
             SpriteBatch.Begin();
 
-            SpriteBatch.Draw(RenderTarget, new Rectangle(Point.Zero, Settings.Resolution), Color.White);
+            SpriteBatch.Draw(RenderTarget, Settings.TargetRectangle, Color.White);
 
             SpriteBatch.End();
         }
@@ -123,12 +98,12 @@ namespace SharedProject.StateManagement
         public void SetConversation(Player player, string conversation)
         {
             this.player = player;
-            //this.conversation = conversations.GetConversation(conversation);
+            this._conversation = (Conversation)_conversations.GetConversation(conversation);
         }
 
         public void StartConversation()
         {
-            conversation.StartConversation();
+            _conversation.StartConversation();
         }
     }
 }
