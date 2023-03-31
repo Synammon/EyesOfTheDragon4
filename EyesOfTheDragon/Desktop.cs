@@ -5,6 +5,7 @@ using SharedProject;
 using SharedProject.GameScreens;
 using SharedProject.GamesScreens;
 using SharedProject.StateManagement;
+using SummonersTale.StateManagement;
 
 namespace EyesOfTheDragon
 {
@@ -15,6 +16,7 @@ namespace EyesOfTheDragon
         public GameStateManager GameStateManager { get; private set; }
         public ITitleState TitleState { get; private set; }
         public IStartMenuState StartMenuState { get; private set; }
+        public INewGameState NewGameState { get; private set; }
         public IGamePlayState GamePlayState { get; private set; }
         public IConversationState ConversationState { get; private set; }
         
@@ -45,7 +47,7 @@ namespace EyesOfTheDragon
 
             Settings.TargetHeight = _graphics.PreferredBackBufferHeight;
             Settings.TargetWidth = _graphics.PreferredBackBufferWidth;
-
+            
             base.Initialize();
         }
 
@@ -61,6 +63,7 @@ namespace EyesOfTheDragon
 
             TitleState = new TitleState(this);
             StartMenuState = new StartMenuState(this);
+            NewGameState = new NewGameState(this);
             GamePlayState = new GamePlayState(this);
             ConversationState = new ConversationState(this);
 

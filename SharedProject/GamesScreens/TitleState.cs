@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using SharedProject.Controls;
 using SharedProject.GamesScreens;
+using SummonersTale.StateManagement;
 
 namespace SharedProject.GameScreens
 {
@@ -66,7 +67,7 @@ namespace SharedProject.GameScreens
 
         private void StartLabel_Selected(object sender, EventArgs e)
         {
-            GameState state = Game.Services.GetService<IGamePlayState>().Tag;
+            GameState state = Game.Services.GetService<INewGameState>().GameState;
             StateManager.ChangeState(state);
         }
 

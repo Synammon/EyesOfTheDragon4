@@ -8,7 +8,7 @@ using SharedProject.StateManagement;
 
 namespace EyesOfTheDragon
 {
-    public class Android : Game
+    public class Game : Microsoft.Xna.Framework.Game
     {
         private readonly GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
@@ -18,7 +18,7 @@ namespace EyesOfTheDragon
         public IGamePlayState GamePlayState { get; private set; }
         public IConversationState ConversationState { get; private set; }
 
-        public Android()
+        public Game()
         {
             _graphics = new GraphicsDeviceManager(this);
 

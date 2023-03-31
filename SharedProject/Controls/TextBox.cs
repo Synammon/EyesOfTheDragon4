@@ -50,7 +50,7 @@ namespace SharedProject.Controls
                 ControlManager.SpriteFont,
                 Text,
                 Helper.NearestInt(Position + Vector2.One * 5),
-                Color.Black,
+                Color,
                 0,
                 Vector2.Zero,
                 1f,

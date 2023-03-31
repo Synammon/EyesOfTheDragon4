@@ -17,14 +17,14 @@ namespace EyesOfTheDragonAndroid
     )]
     public class Activity1 : AndroidGameActivity
     {
-        private Android _game;
+        private Game _game;
         private View _view;
 
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
 
-            _game = new Android();
+            _game = new Game();
             _view = _game.Services.GetService(typeof(View)) as View;
             SetContentView(_view);
             HideSystemUI();
