@@ -68,7 +68,7 @@ namespace SharedProject.GameScreens
         private void StartLabel_Selected(object sender, EventArgs e)
         {
             GameState state = Game.Services.GetService<INewGameState>().GameState;
-            StateManager.ChangeState(state);
+            StateManager.PushState(state);
         }
 
         public override void Update(GameTime gameTime)
