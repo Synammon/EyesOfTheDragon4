@@ -20,7 +20,7 @@ namespace SharedProject.Characters
         public bool Enabled { get; set; }
         public bool Visible { get; set; }
         public Vector2 Position { get; set; }
-        public int Stength { get; set; }
+        public int Strength { get; set; }
         public int Perception { get; set; }
         public int Endurance { get; set; }
         public int Charisma { get; set; }

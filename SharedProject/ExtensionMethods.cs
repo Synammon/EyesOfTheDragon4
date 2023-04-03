@@ -20,6 +20,21 @@ namespace SharedProject
             texture2D.SetData(data);
         }
 
+        public static void Draw(this SpriteBatch spriteBatch, Texture2D texture, Point destination, Rectangle? source, Color color)
+        {
+            spriteBatch.Draw(texture, new Vector2(destination.X, destination.Y), source, color);
+        }
+
+        public static void Draw(this SpriteBatch spriteBatch, Texture2D texture, Point destination, Color color)
+        {
+            spriteBatch.Draw(texture, new Vector2(destination.X, destination.Y), color);
+        }
+
+        public static void DrawString(this SpriteBatch spriteBatch, SpriteFont font, string text, Point destination, Color tint)
+        {
+            spriteBatch.DrawString(font, text, new Vector2(destination.X, destination.Y), tint);
+        }
+
         public static Rectangle Grow(this Rectangle r, int size)
         {
             return new(r.X - size,

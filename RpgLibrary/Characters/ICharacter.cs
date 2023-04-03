@@ -39,7 +39,7 @@ namespace RpgLibrary.Characters
     {
         string Name { get; }
 
-        int Stength { get; set; }
+        int Strength { get; set; }
         int Perception { get; set; }
         int Endurance { get; set; }
         int Charisma { get; set; }

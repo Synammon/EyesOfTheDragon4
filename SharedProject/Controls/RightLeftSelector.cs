@@ -131,7 +131,7 @@ namespace SharedProject.Controls
             float itemWidth = SpriteFont.MeasureString(_items[_selectedItem]).X;
             float offset = (_maxItemWidth - itemWidth) / 2;
 
-            Vector2 off = new(offset, _yOffset);
+            Vector2 off = new((int)offset, (int)_yOffset);
 
             if (HasFocus)
                 spriteBatch.DrawString(SpriteFont, _items[_selectedItem], drawTo + off, _selectedColor);

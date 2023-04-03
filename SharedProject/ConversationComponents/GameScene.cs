@@ -126,6 +126,7 @@ namespace RpgLibrary.ConversationComponents
                         Index = index++,
                     },
                     Text = option.OptionText,
+                    Action = option.OptionAction
                 };
 
                 buttonGroup.Button.Click += Button_Click;
@@ -142,8 +143,9 @@ namespace RpgLibrary.ConversationComponents
 
             if (btn.Index.HasValue)
             {
+                ButtonGroup button = this.buttons[btn.Index.Value];
                 SelectedIndexEventArgs item = new() { Index = btn.Index.Value };
-                ItemSelected?.Invoke(sender, item);
+                ItemSelected?.Invoke(button, item);
             }
         }
 

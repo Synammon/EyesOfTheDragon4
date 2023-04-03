@@ -8,6 +8,7 @@ using SharedProject;
 using SharedProject.Controls;
 using SharedProject.GamesScreens;
 using Microsoft.Xna.Framework.Content;
+using SharedProject.Sprites;
 
 namespace SummonersTale.StateManagement
 {
@@ -249,33 +250,33 @@ namespace SummonersTale.StateManagement
             };
 
             _femalePortraits.Add(
-            "Female 0",
+            "Fighter",
                 content.Load<Texture2D>(@"PlayerSprites/femalefighter"));
             _femalePortraits.Add(
-            "Female 1",
+            "Priest",
                 content.Load<Texture2D>(@"PlayerSprites/femalepriest"));
             _femalePortraits.Add(
-            "Female 2",
+            "Rogue",
                 content.Load<Texture2D>(@"PlayerSprites/femalerogue"));
             _femalePortraits.Add(
-            "Female 3",
+            "Wizard",
                 content.Load<Texture2D>(@"PlayerSprites/femalewizard"));
 
             _malePortraits.Add(
-            "Male 0",
+            "Fighter",
                 content.Load<Texture2D>(@"PlayerSprites/malefighter"));
             _malePortraits.Add(
-            "Male 1",
+            "Priest",
                 content.Load<Texture2D>(@"PlayerSprites/malepriest"));
             _malePortraits.Add(
-            "Male 2",
+            "Rogue",
                 content.Load<Texture2D>(@"PlayerSprites/malerogue"));
             _malePortraits.Add(
-            "Male 3",
+            "Wizard",
                 content.Load<Texture2D>(@"PlayerSprites/malewizard"));
 
 
-            _portraitSelector.SetItems(_femalePortraits.Keys.ToArray(), 270);
+            _portraitSelector.SetItems(_femalePortraits.Keys.ToArray(), 300);
             _create = new(
                 content.Load<Texture2D>(@"GUI\g9202"),
                 ButtonRole.Accept)
@@ -353,20 +354,51 @@ namespace SummonersTale.StateManagement
 
         private void Create_Click(object sender, EventArgs e)
         {
-            //Player = new(
-            //    Game,
-            //    _nameTextBox.Text,
-            //    _genderSelector.SelectedIndex == 0,
-            //    null);
             if (_points > 0) return;
 
+            Dictionary<string, Animation> animations = new();
+
+            Animation animation = new(3, 32, 32, 0, 0) { CurrentFrame = 0, FramesPerSecond = 8 };
+            animations.Add("walkdown", animation);
+
+            animation = new(3, 32, 32, 0, 32) { CurrentFrame = 0, FramesPerSecond = 8 };
+            animations.Add("walkleft", animation);
+
+            animation = new(3, 32, 32, 0, 64) { CurrentFrame = 0, FramesPerSecond = 8 };
+            animations.Add("walkright", animation);
+
+            animation = new(3, 32, 32, 0, 96) { CurrentFrame = 0, FramesPerSecond = 8 };
+            animations.Add("walkup", animation);
+
+            Player player = new(
+                Game,
+                new(_genderSelector.SelectedIndex == 0 ?
+                    _femalePortraits[_portraitSelector.SelectedItem] :
+                    _malePortraits[_portraitSelector.SelectedItem],
+                animations))
+            {
+                Strength = 2 + _strengthSelector.SelectedIndex,
+                Perception = 2 + _perceptionSelector.SelectedIndex,
+                Endurance = 2 + _enduranceSelector.SelectedIndex,
+                Charisma = 2 + _charismaSelector.SelectedIndex,
+                Intellect = 2 + _intellectSelector.SelectedIndex,
+                Agility = 2 + _agilitySelector.SelectedIndex,
+                Luck = 2 + _luckSelector.SelectedIndex
+            };
+
+            player.Health = new(player.Strength * player.Endurance);
+            player.Mana = new(player.Intellect * player.Endurance);
+
+            player.Sprite.CurrentAnimation = "walkdown";
+
             IGamePlayState gamePlayState = Game.Services.GetService<IGamePlayState>();
+
+            gamePlayState.Player = player;
 
             StateManager.PopState();
             StateManager.PushState(gamePlayState.Tag);
 
             gamePlayState.Tag.Enabled = true;
-            //gamePlayState.NewGame();
         }
 
         private void GenderSelector_SelectionChanged(object sender, EventArgs e)
