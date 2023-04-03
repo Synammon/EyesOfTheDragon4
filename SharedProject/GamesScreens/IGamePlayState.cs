@@ -7,5 +7,6 @@ namespace SharedProject.GamesScreens
     public interface IGamePlayState
     {
         GameState Tag { get; }
+        Player Player { get; set; }
     }
 }

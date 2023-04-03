@@ -3,19 +3,14 @@ using Microsoft.Xna.Framework.Graphics;
 using Rpglibrary.TileEngine;
 using RpgLibrary.Characters;
 using RpgLibrary.TileEngine;
-using SharedProject;
 using SharedProject.Characters;
 using SharedProject.Controls;
 using SharedProject.GamesScreens;
 using SharedProject.Sprites;
 using SharedProject.StateManagement;
-using SharpFont.Cache;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection.Metadata;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace SharedProject.GameScreens
 {
@@ -25,14 +20,13 @@ namespace SharedProject.GameScreens
         TileMap map;
         readonly Engine engine;
         RenderTarget2D renderTarget;
-        AnimatedSprite sprite;
         private Button upButton, downButton, leftButton, rightButton;
         private bool inMotion = false;
         private Rectangle collision = new();
         private float speed;
         private Vector2 motion;
 
-        public Player Player { get; private set; }
+        public Player Player { get; set; }
 
         private IConversationManager _conversationManager;
         private IConversationState _conversationState;
@@ -53,118 +47,107 @@ namespace SharedProject.GameScreens
             base.Initialize();
         }
 
-    protected override void LoadContent()
-    {
-        base.LoadContent();
-
-        Player = (Player)Game.Services.GetService<IPlayer>();
-
-        _conversationState = Game.Services.GetService<IConversationState>();
-        _conversationManager = Game.Services.GetService<IConversationManager>();
-
-        renderTarget = new(GraphicsDevice, Settings.BaseWidth, Settings.BaseHeight);
-
-        Texture2D texture = Game.Content.Load<Texture2D>(@"Tiles/tileset1");
-
-        List<Tileset> tilesets = new()
+        protected override void LoadContent()
         {
-            new(texture, 8, 8, 32, 32),
-        };
+            base.LoadContent();
 
-        TileLayer layer = new(100, 100);
+            _conversationState = Game.Services.GetService<IConversationState>();
+            _conversationManager = Game.Services.GetService<IConversationManager>();
 
-        map = new("test", tilesets[0], layer);
+            renderTarget = new(GraphicsDevice, Settings.BaseWidth, Settings.BaseHeight);
 
-        Dictionary<string, Animation> animations = new();
+            Texture2D texture = Game.Content.Load<Texture2D>(@"Tiles/tileset1");
 
-        Animation animation = new(3, 32, 32, 0, 0) { CurrentFrame = 0, FramesPerSecond = 8 };
-        animations.Add("walkdown", animation);
+            List<Tileset> tilesets = new()
+            {
+                new(texture, 8, 8, 32, 32),
+            };
 
-        animation = new(3, 32, 32, 0, 32) { CurrentFrame = 0, FramesPerSecond = 8 };
-        animations.Add("walkleft", animation);
+            TileLayer layer = new(100, 100);
 
-        animation = new(3, 32, 32, 0, 64) { CurrentFrame = 0, FramesPerSecond = 8 };
-        animations.Add("walkright", animation);
+            map = new("test", tilesets[0], layer);
 
-        animation = new(3, 32, 32, 0, 96) { CurrentFrame = 0, FramesPerSecond = 8 };
-        animations.Add("walkup", animation);
+            Dictionary<string, Animation> animations = new();
 
-        texture = Game.Content.Load<Texture2D>(@"PlayerSprites/femalepriest");
+            Animation animation = new(3, 32, 32, 0, 0) { CurrentFrame = 0, FramesPerSecond = 8 };
+            animations.Add("walkdown", animation);
 
-        sprite = new(texture, animations)
-        {
-            CurrentAnimation = "walkdown",
-            IsActive = true,
-            IsAnimating = true,
-        };
+            animation = new(3, 32, 32, 0, 32) { CurrentFrame = 0, FramesPerSecond = 8 };
+            animations.Add("walkleft", animation);
 
-        texture = Game.Content.Load<Texture2D>(@"PlayerSprites/femalefighter");
+            animation = new(3, 32, 32, 0, 64) { CurrentFrame = 0, FramesPerSecond = 8 };
+            animations.Add("walkright", animation);
 
-        AnimatedSprite rio = new(texture, animations) 
-        { 
-            CurrentAnimation = "walkdown",
-            IsAnimating = true,
-        };
+            animation = new(3, 32, 32, 0, 96) { CurrentFrame = 0, FramesPerSecond = 8 };
+            animations.Add("walkup", animation);
 
-        CharacterLayer chars = new();
+            texture = Game.Content.Load<Texture2D>(@"PlayerSprites/femalefighter");
 
-        chars.Characters.Add(
-            new Villager(rio, new(10, 10)) 
+            AnimatedSprite rio = new(texture, animations) 
             { 
-                Position = new(320, 320),
-                Tile = new(10, 10),
-                Visible= true,
-                Enabled=true,
-                Conversation="Rio"
-            });
+                CurrentAnimation = "walkdown",
+                IsAnimating = true,
+            };
 
-        map.AddLayer(chars);
+            CharacterLayer chars = new();
 
-        rightButton = new(Game.Content.Load<Texture2D>("GUI/g21245"), ButtonRole.Menu)
-        {
-            Position = new(80, Settings.BaseHeight - 80),
-            Size = new(32, 32),
-            Text = "",
-            Color = Color.White,
-        };
+            chars.Characters.Add(
+                new Villager(rio, new(10, 10)) 
+                { 
+                    Position = new(320, 320),
+                    Tile = new(10, 10),
+                    Visible= true,
+                    Enabled=true,
+                    Conversation="Rio"
+                });
 
-        rightButton.Down += RightButton_Down;
-        ControlManager.Add(rightButton);
+            map.AddLayer(chars);
 
-        upButton = new(Game.Content.Load<Texture2D>("GUI/g21263"), ButtonRole.Menu)
-        {
-            Position = new(48, Settings.BaseHeight - 48 - 64),
-            Size = new(32, 32),
-            Text = "",
-            Color = Color.White,
-        };
+            rightButton = new(Game.Content.Load<Texture2D>("GUI/g21245"), ButtonRole.Menu)
+            {
+                Position = new(80, Settings.BaseHeight - 80),
+                Size = new(32, 32),
+                Text = "",
+                Color = Color.White,
+            };
 
-        upButton.Down += UpButton_Down;
-        ControlManager.Add(upButton);
+            rightButton.Down += RightButton_Down;
+            ControlManager.Add(rightButton);
 
-        downButton = new(Game.Content.Load<Texture2D>("GUI/g21272"), ButtonRole.Menu)
-        {
-            Position = new(48, Settings.BaseHeight - 48),
-            Size = new(32, 32),
-            Text = "",
-            Color = Color.White,
-        };
+            upButton = new(Game.Content.Load<Texture2D>("GUI/g21263"), ButtonRole.Menu)
+            {
+                Position = new(48, Settings.BaseHeight - 48 - 64),
+                Size = new(32, 32),
+                Text = "",
+                Color = Color.White,
+            };
 
-        downButton.Down += DownButton_Down;
-        ControlManager.Add(downButton);
+            upButton.Down += UpButton_Down;
+            ControlManager.Add(upButton);
 
-        leftButton = new(Game.Content.Load<Texture2D>("GUI/g22987"), ButtonRole.Menu)
-        {
-            Position = new(16, Settings.BaseHeight - 80),
-            Size = new(32, 32),
-            Text = "",
-            Color = Color.White,
-        };
+            downButton = new(Game.Content.Load<Texture2D>("GUI/g21272"), ButtonRole.Menu)
+            {
+                Position = new(48, Settings.BaseHeight - 48),
+                Size = new(32, 32),
+                Text = "",
+                Color = Color.White,
+            };
 
-        leftButton.Down += LeftButton_Down;
+            downButton.Down += DownButton_Down;
+            ControlManager.Add(downButton);
 
-        ControlManager.Add(leftButton);
-    }
+            leftButton = new(Game.Content.Load<Texture2D>("GUI/g22987"), ButtonRole.Menu)
+            {
+                Position = new(16, Settings.BaseHeight - 80),
+                Size = new(32, 32),
+                Text = "",
+                Color = Color.White,
+            };
+
+            leftButton.Down += LeftButton_Down;
+
+            ControlManager.Add(leftButton);
+        }
 
         private void LeftButton_Down(object sender, EventArgs e)
         {
@@ -178,10 +161,10 @@ namespace SharedProject.GameScreens
         {
             motion = new(-1, 0);
             inMotion = true;
-            sprite.CurrentAnimation = "walkleft";
+            Player.Sprite.CurrentAnimation = "walkleft";
             collision = new(
-                (sprite.Tile.X - 2) * Engine.TileWidth,
-                sprite.Tile.Y * Engine.TileHeight,
+                (Player.Sprite.Tile.X - 2) * Engine.TileWidth,
+                Player.Sprite.Tile.Y * Engine.TileHeight,
                 Engine.TileWidth,
                 Engine.TileHeight);
         }
@@ -198,10 +181,10 @@ namespace SharedProject.GameScreens
         {
             motion = new(1, 0);
             inMotion = true;
-            sprite.CurrentAnimation = "walkright";
+            Player.Sprite.CurrentAnimation = "walkright";
             collision = new(
-                (sprite.Tile.X + 2) * Engine.TileWidth,
-                sprite.Tile.Y * Engine.TileHeight,
+                (Player.Sprite.Tile.X + 2) * Engine.TileWidth,
+                Player.Sprite.Tile.Y * Engine.TileHeight,
                 Engine.TileWidth,
                 Engine.TileHeight);
         }
@@ -217,9 +200,9 @@ namespace SharedProject.GameScreens
         private void MoveDown()
         {
             motion = new(0, 1);
-            Point newTile = sprite.Tile + new Point(0, 2);
+            Point newTile = Player.Sprite.Tile + new Point(0, 2);
             inMotion = true;
-            sprite.CurrentAnimation = "walkdown";
+            Player.Sprite.CurrentAnimation = "walkdown";
             collision = new(
                 newTile.X * Engine.TileWidth,
                 newTile.Y * Engine.TileHeight,
@@ -239,10 +222,10 @@ namespace SharedProject.GameScreens
         {
             motion = new(0, -1);
             inMotion = true;
-            sprite.CurrentAnimation = "walkup";
+            Player.Sprite.CurrentAnimation = "walkup";
             collision = new(
-                sprite.Tile.X * Engine.TileWidth,
-                (sprite.Tile.Y - 2) * Engine.TileHeight,
+                Player.Sprite.Tile.X * Engine.TileWidth,
+                (Player.Sprite.Tile.Y - 2) * Engine.TileHeight,
                 Engine.TileWidth,
                 Engine.TileHeight);
         }
@@ -251,7 +234,7 @@ namespace SharedProject.GameScreens
         {
             ControlManager.Update(gameTime);
 
-            sprite.Update(gameTime);
+            Player.Update(gameTime);
             map.Update(gameTime);
 
             if (Xin.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.A) && !inMotion)
@@ -280,22 +263,24 @@ namespace SharedProject.GameScreens
             if (motion != Vector2.Zero)
             {
                 motion.Normalize();
+                Player.Sprite.IsAnimating = true;
             }
             else
             {
                 inMotion = false;
+                Player.Sprite.IsAnimating = false;
                 return;
             }
 
-            if (!sprite.LockToMap(new(99 * Engine.TileWidth, 99 * Engine.TileHeight), ref motion))
+            if (!Player.Sprite.LockToMap(new(99 * Engine.TileWidth, 99 * Engine.TileHeight), ref motion))
             {
                 inMotion = false;
                 return;
             }
 
-            Vector2 newPosition = sprite.Position + motion * speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            Vector2 newPosition = Player.Sprite.Position + motion * speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            Rectangle nextPotition = new Rectangle(
+            Rectangle nextPotition = new(
                 (int)newPosition.X,
                 (int)newPosition.Y,
                 Engine.TileWidth,
@@ -305,7 +290,7 @@ namespace SharedProject.GameScreens
             {
                 inMotion = false;
                 motion = Vector2.Zero;
-                sprite.Position = new((int)sprite.Position.X, (int)sprite.Position.Y);
+                Player.Sprite.Position = new((int)Player.Sprite.Position.X, (int)Player.Sprite.Position.Y);
                 return;
             }
 
@@ -316,10 +301,10 @@ namespace SharedProject.GameScreens
                 return;
             }
 
-            sprite.Position = newPosition;
-            sprite.Tile = Engine.VectorToCell(newPosition);
+            Player.Sprite.Position = newPosition;
+            Player.Sprite.Tile = Engine.VectorToCell(newPosition);
 
-            camera.LockToSprite(sprite, map);
+            camera.LockToSprite(Player.Sprite, map);
 
             base.Update(gameTime);
         }
@@ -332,8 +317,8 @@ namespace SharedProject.GameScreens
             {
                 foreach (ICharacter c in characterLayer.Characters)
                 {
-                    if (c.Tile.X == sprite.Tile.X && Math.Abs(sprite.Tile.Y - c.Tile.Y) == 1 ||
-                        (c.Tile.Y == sprite.Tile.Y && Math.Abs(sprite.Tile.X - c.Tile.X) == 1))
+                    if (c.Tile.X == Player.Sprite.Tile.X && Math.Abs(Player.Sprite.Tile.Y - c.Tile.Y) == 1 ||
+                        (c.Tile.Y == Player.Sprite.Tile.Y && Math.Abs(Player.Sprite.Tile.X - c.Tile.X) == 1))
                     {
                         if (c is Villager villager)
                         {
@@ -363,7 +348,7 @@ namespace SharedProject.GameScreens
                                 camera.Transformation);
 
             map.Draw(gameTime, SpriteBatch, camera);
-            sprite.Draw(SpriteBatch);
+            Player.Draw(SpriteBatch);
 
             SpriteBatch.End();
 
