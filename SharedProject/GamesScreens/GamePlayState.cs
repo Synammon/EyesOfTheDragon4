@@ -1,11 +1,13 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Rpglibrary.TileEngine;
+using RpgLibrary;
 using RpgLibrary.Characters;
 using RpgLibrary.TileEngine;
 using SharedProject.Characters;
 using SharedProject.Controls;
 using SharedProject.GamesScreens;
+using SharedProject.Mobs;
 using SharedProject.Sprites;
 using SharedProject.StateManagement;
 using System;
@@ -102,6 +104,14 @@ namespace SharedProject.GameScreens
                 });
 
             map.AddLayer(chars);
+
+            EncounterLayer encounters = new();
+
+            Encounter encounter = new(Player);
+            encounter.Enemies.Add(Mob.FromString("Name=Giant Bat,Strength=3,Agility=5,Health=21,Position=640:640,Tile=5:5,AnimatedSprite=32x32-bat-sprite;down:0:0:32:32:4;right:0:32:32:32:4;up:0:64:32:32:4;left:0:96:32:32:4;down", Game.Content));
+
+            encounters.Encounters.Add(((Mob)encounter.Enemies[0]).AnimatedSprite, encounter);
+            map.AddLayer(encounters);
 
             rightButton = new(Game.Content.Load<Texture2D>("GUI/g21245"), ButtonRole.Menu)
             {

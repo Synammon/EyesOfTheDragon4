@@ -2446,6 +2446,18 @@
 /processorParam:TextureFormat=Color
 /build:GUI/UpButton.png
 
+#begin Mobs/32x32-bat-sprite.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Mobs/32x32-bat-sprite.png
+
 #begin PlayerSprites/femalefighter.png
 /importer:TextureImporter
 /processor:TextureProcessor
