@@ -118,6 +118,10 @@ namespace RpgLibrary.TileEngine
                 {
                     characters.Draw(spriteBatch, camera, _tilesets);
                 }
+                else if (layer is EncounterLayer encounter)
+                {
+                    encounter.Draw(spriteBatch, camera, _tilesets);
+                }
             }
         }
 
