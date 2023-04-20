@@ -138,25 +138,48 @@ namespace RpgLibrary.TileEngine
                 _mapLayers.Add(layer);
         }
 
-        public bool PlayerCollides(Rectangle nextPotition)
-        {
-            CharacterLayer layer = _mapLayers.Where(x => x is CharacterLayer).FirstOrDefault() as CharacterLayer;
-
-            if (layer != null)
+            public bool PlayerCollides(Rectangle nextPotition)
             {
-                foreach (var character in layer.Characters)
+                if (_mapLayers.FirstOrDefault(x => x is CharacterLayer) is CharacterLayer layer)
                 {
-                    Rectangle rectangle = new(
-                        new(character.Tile.X * Engine.TileWidth, character.Tile.Y * Engine.TileHeight), 
-                        new(Engine.TileWidth, Engine.TileHeight));
-                    if (rectangle.Intersects(nextPotition))
+                    foreach (var character in layer.Characters)
                     {
-                        return true;
+                        Rectangle rectangle = new(
+                            new(character.Tile.X * Engine.TileWidth, character.Tile.Y * Engine.TileHeight),
+                            new(Engine.TileWidth, Engine.TileHeight));
+                        if (rectangle.Intersects(nextPotition))
+                        {
+                            return true;
+                        }
                     }
                 }
-            }
 
-            return false;
-        }
+                if (_mapLayers.FirstOrDefault(x => x is EncounterLayer) is EncounterLayer encounter)
+                {
+                    foreach (var character in encounter.Encounters.Keys)
+                    {
+                        Rectangle rectangle = new(
+                            new((int)character.Position.X, (int)character.Position.Y),
+                            new(Engine.TileWidth, Engine.TileHeight));
+
+                        if (rectangle.Intersects(nextPotition))
+                        {
+                            return true;
+                        }
+                    }
+                }
+
+                if (_mapLayers.FirstOrDefault(x => x is CollisionLayer) is CollisionLayer collisions)
+                {
+                    foreach (var r in collisions.Collisions.Keys)
+                    {
+                        if (r.Intersects(nextPotition) && collisions.Collisions[r] == CollisionValue.Impassible)
+                        {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
     }
 }

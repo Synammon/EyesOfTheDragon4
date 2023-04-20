@@ -33,6 +33,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)ConversationManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExtensionMethods.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GamesScreens\ConversationState.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GamesScreens\EncounterState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GamesScreens\GamePlayState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GamesScreens\IGamePlayState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GamesScreens\NewGameState.cs" />
