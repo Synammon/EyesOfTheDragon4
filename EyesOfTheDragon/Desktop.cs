@@ -19,7 +19,7 @@ namespace EyesOfTheDragon
         public INewGameState NewGameState { get; private set; }
         public IGamePlayState GamePlayState { get; private set; }
         public IConversationState ConversationState { get; private set; }
-        
+        public IEncounterState EncounterState { get; private set; }
         public IConversationManager ConversationManager { get; private set; }
         public Player Player { get; private set; }
 
@@ -66,6 +66,7 @@ namespace EyesOfTheDragon
             NewGameState = new NewGameState(this);
             GamePlayState = new GamePlayState(this);
             ConversationState = new ConversationState(this);
+            EncounterState = new EncounterState(this);
 
             GameStateManager.PushState((TitleState)TitleState);
         }

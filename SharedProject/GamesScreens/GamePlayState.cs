@@ -32,19 +32,20 @@ namespace SharedProject.GameScreens
 
         private IConversationManager _conversationManager;
         private IConversationState _conversationState;
-
+        private IEncounterState _encounterState;
+        
         public GamePlayState(Game game) : base(game)
         {
             Game.Services.AddService<IGamePlayState>(this);
             camera = new(Settings.BaseRectangle);
-            engine = new(32, 32, Settings.BaseRectangle);
+            engine = new(64, 64, Settings.BaseRectangle);
         }
 
         public GameState Tag => this;
 
         public override void Initialize()
         {
-            speed = 96;
+            speed = 160;
 
             base.Initialize();
         }
@@ -55,6 +56,7 @@ namespace SharedProject.GameScreens
 
             _conversationState = Game.Services.GetService<IConversationState>();
             _conversationManager = Game.Services.GetService<IConversationManager>();
+            _encounterState = Game.Services.GetService<IEncounterState>();
 
             renderTarget = new(GraphicsDevice, Settings.BaseWidth, Settings.BaseHeight);
 
@@ -96,7 +98,7 @@ namespace SharedProject.GameScreens
             chars.Characters.Add(
                 new Villager(rio, new(10, 10)) 
                 { 
-                    Position = new(320, 320),
+                    Position = new(480, 480),
                     Tile = new(10, 10),
                     Visible= true,
                     Enabled=true,
@@ -108,7 +110,7 @@ namespace SharedProject.GameScreens
             EncounterLayer encounters = new();
 
             Encounter encounter = new(Player);
-            encounter.Enemies.Add(Mob.FromString("Name=Giant Bat,Strength=3,Agility=5,Health=21,Position=640:640,Tile=5:5,AnimatedSprite=32x32-bat-sprite;down:0:0:32:32:4;right:0:32:32:32:4;up:0:64:32:32:4;left:0:96:32:32:4;down", Game.Content));
+            encounter.Enemies.Add(Mob.FromString("Name=Giant Bat,Strength=3,Agility=5,Health=21,Position=640:640,Tile=5:5,AnimatedSprite=32x32-bat-sprite;down:32:0:32:32:3;right:32:32:32:32:3;up:32:64:32:32:3;left:32:96:32:32:3;deaddown:0:0:32:32:1;deadright:0:32:32:32:1;deadup:0:64:32:32:1;deadleft:0:96:32:32:1;down", Game.Content));
 
             encounters.Encounters.Add(((Mob)encounter.Enemies[0]).AnimatedSprite, encounter);
             map.AddLayer(encounters);
@@ -270,6 +272,11 @@ namespace SharedProject.GameScreens
                 HandleConversation();
             }
 
+            if (Xin.WasKeyReleased(Microsoft.Xna.Framework.Input.Keys.E) && !inMotion)
+            {
+                HandleEncounter();
+            }
+
             if (motion != Vector2.Zero)
             {
                 motion.Normalize();
@@ -317,6 +324,27 @@ namespace SharedProject.GameScreens
             camera.LockToSprite(Player.Sprite, map);
 
             base.Update(gameTime);
+        }
+
+        private void HandleEncounter()
+        {
+            var layer = map.Layers.FirstOrDefault(x => x is EncounterLayer) as EncounterLayer;
+
+            if (layer != null)
+            {
+                foreach (var c in layer.Encounters.Keys)
+                {
+                    Point tile = Engine.VectorToCell(c.Position);
+
+                    if (tile.X == Player.Sprite.Tile.X && Math.Abs(Player.Sprite.Tile.Y - tile.Y) == 1 ||
+                        (tile.Y == Player.Sprite.Tile.Y && Math.Abs(Player.Sprite.Tile.X - tile.X) == 1))
+                    {
+                        _encounterState.SetEncounter(Player, layer.Encounters[c]);
+                        StateManager.PushState((EncounterState)_encounterState);
+                        break;
+                    }
+                }
+            }
         }
 
         private void HandleConversation()
