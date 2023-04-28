@@ -4,6 +4,7 @@ using RpgLibrary.Characters;
 using SharedProject.Sprites;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 
 namespace SharedProject

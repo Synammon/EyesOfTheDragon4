@@ -58,8 +58,11 @@ namespace RpgLibrary
 
         public void RandomMap(ContentManager content)
         {
+#if DEBUG
+            Random random = new(113399);
+#else
             Random random = new();
-
+#endif
             Texture2D texture = content.Load<Texture2D>(@"Tiles/tileset1");
 
             List<Tileset> tilesets = new()
@@ -67,15 +70,15 @@ namespace RpgLibrary
                 new(texture, 8, 8, 32, 32),
             };
 
-            TileLayer layer = new(1280 / 64 + 1, 720 / 64 + 1);
+            TileLayer layer = new(1280 / Engine.TileWidth + 1, 720 / Engine.TileHeight + 1);
 
             Map = new("test", tilesets[0], layer);
 
-            layer = new(1280 / 64 + 1, 720 / 64 + 1);
+            layer = new(1280 / Engine.TileWidth + 1, 720 / Engine.TileHeight + 1);
             CollisionLayer collisions = new();
 
-            for (int y = 0; y < 720 / 64 + 1; y++)
-                for (int x = 0; x < 1280 / 64 + 1; x++)
+            for (int y = 0; y < 720 / Engine.TileHeight + 1; y++)
+                for (int x = 0; x < 1280 / Engine.TileWidth + 1; x++)
                 {
                     layer.SetTile(x, y, new Tile(-1, -1));
                 }
@@ -87,15 +90,19 @@ namespace RpgLibrary
 
                 do
                 {
-                    x = random.Next(1 + 1280 / 64);
-                    y = random.Next(1 + 720 / 64);
-                } while (Allies.Any(z => z.Tile.X == x && z.Tile.Y == y) ||
-                            Enemies.Any(z => z.Tile.X == x && z.Tile.Y == y));
+                    x = random.Next(1 + 1280 / Engine.TileWidth);
+                    y = random.Next(1 + 720 / Engine.TileHeight);
+                } while ((Allies.Any(z => z.Tile.X == x && z.Tile.Y == y) ||
+                            Enemies.Any(z => z.Tile.X == x && z.Tile.Y == y)) &&
+                            collisions.Collisions.ContainsKey(new Rectangle(new(x * Engine.TileWidth, y * Engine.TileHeight), new(Engine.TileWidth, Engine.TileHeight))));
 
-                collisions.Collisions.Add(new(
-                    new(x * Engine.TileWidth, y * Engine.TileHeight), 
-                    new(Engine.TileWidth, Engine.TileHeight)),
-                    CollisionValue.Impassible);
+                if (!collisions.Collisions.ContainsKey(new Rectangle(new(x * Engine.TileWidth, y * Engine.TileHeight), new(Engine.TileWidth, Engine.TileHeight))))
+                {
+                    collisions.Collisions.Add(new(
+                        new(x * Engine.TileWidth, y * Engine.TileHeight),
+                        new(Engine.TileWidth, Engine.TileHeight)),
+                        CollisionValue.Impassible);
+                }
 
                 layer.SetTile(x, y, new Tile(random.Next(3, 14), 0));
             }
