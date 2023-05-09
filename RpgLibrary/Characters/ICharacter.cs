@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace RpgLibrary.Characters
 {
-    public struct AttributePair
+    public class AttributePair
     {
         public int Current;
         public int Maximum;

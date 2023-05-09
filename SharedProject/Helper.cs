@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using RpgLibrary.Characters;
+using RpgLibrary.TileEngine;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -49,6 +50,12 @@ namespace SharedProject
         public static Point V2P(Vector2 vector2)
         {
             return new((int)vector2.X, (int)vector2.Y);
+        }
+
+        public static Rectangle Destiation(Point p)
+        {
+            return new(new(p.X * Engine.TileWidth, p.Y * Engine.TileHeight), 
+                        new(Engine.TileWidth, Engine.TileHeight));
         }
 
         public static Random Random 
