@@ -181,5 +181,46 @@ namespace RpgLibrary.TileEngine
                 }
                 return false;
             }
+
+        public static IEnumerable<Vector2> GetPointsOnLine(float x0, float y0, float x1, float y1)
+        {
+            bool steep = Math.Abs(y1 - y0) > Math.Abs(x1 - x0);
+            if (steep)
+            {
+                float t;
+                t = x0; // swap x0 and y0
+                x0 = y0;
+                y0 = t;
+                t = x1; // swap x1 and y1
+                x1 = y1;
+                y1 = t;
+            }
+            if (x0 > x1)
+            {
+                float t;
+                t = x0; // swap x0 and x1
+                x0 = x1;
+                x1 = t;
+                t = y0; // swap y0 and y1
+                y0 = y1;
+                y1 = t;
+            }
+            float dx = x1 - x0;
+            float dy = Math.Abs(y1 - y0);
+            float error = dx / 2;
+            float ystep = (y0 < y1) ? 1f : -1f;
+            float y = y0;
+            for (float x = x0; x <= x1; x += 1f)
+            {
+                yield return new Microsoft.Xna.Framework.Vector2((steep ? y : x), (steep ? x : y));
+                error -= dy;
+                if (error < 0)
+                {
+                    y += ystep;
+                    error += dx;
+                }
+            }
+            yield break;
+        }
     }
 }

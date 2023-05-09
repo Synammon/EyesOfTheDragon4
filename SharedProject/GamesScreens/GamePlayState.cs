@@ -110,7 +110,7 @@ namespace SharedProject.GameScreens
             EncounterLayer encounters = new();
 
             Encounter encounter = new(Player);
-            encounter.Enemies.Add(Mob.FromString("Name=Giant Bat,Strength=3,Agility=5,Health=21,Position=640:640,Tile=5:5,AnimatedSprite=32x32-bat-sprite;down:32:0:32:32:3;right:32:32:32:32:3;up:32:64:32:32:3;left:32:96:32:32:3;deaddown:0:0:32:32:1;deadright:0:32:32:32:1;deadup:0:64:32:32:1;deadleft:0:96:32:32:1;down", Game.Content));
+            encounter.Enemies.Add(Mob.FromString("Name=Giant Bat,Strength=3,Agility=5,Health=21,Mana=21,Position=640:640,Tile=5:5,AnimatedSprite=32x32-bat-sprite;down:32:0:32:32:3;right:32:32:32:32:3;up:32:64:32:32:3;left:32:96:32:32:3;deaddown:0:0:32:32:1;deadright:0:32:32:32:1;deadup:0:64:32:32:1;deadleft:0:96:32:32:1;down", Game.Content));
 
             encounters.Encounters.Add(((Mob)encounter.Enemies[0]).AnimatedSprite, encounter);
             map.AddLayer(encounters);

@@ -5,12 +5,14 @@ using RpgLibrary.Characters;
 using RpgLibrary.TileEngine;
 using SharedProject.Controls;
 using SharedProject.Mobs;
+using SharedProject.Moves;
 using SharedProject.Sprites;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.ExceptionServices;
 using System.Text;
+using static Assimp.Metadata;
 
 namespace SharedProject.GamesScreens
 {
@@ -347,17 +349,16 @@ namespace SharedProject.GamesScreens
 
         private void DoAttack(Point direction)
         {
-            Point target = Player.Tile + direction;
-            Rectangle destination = new(target, new(Engine.TileWidth, Engine.TileHeight));
+            Point target = Player.Sprite.Tile + direction;
+            Rectangle destination = Helper.Destiation(target);
 
             for (int i =  0; i < encounter.Enemies.Count; i++)
             {
                 var enemy = encounter.Enemies[i];
 
-                Point enemyTile = new((int)((Mob)enemy).AnimatedSprite.Position.X / Engine.TileWidth,
-                    (int)((Mob)enemy).AnimatedSprite.Position.Y / Engine.TileHeight);
+                Point enemyTile = ((Mob)enemy).AnimatedSprite.Tile;
 
-                Rectangle enemyDestination = new(enemyTile, new(Engine.TileWidth, Engine.TileHeight));
+                Rectangle enemyDestination = Helper.Destiation(enemyTile);
 
                 if (enemyDestination.Intersects(destination) && Helper.RollDie(((ICharacter)Player),"Agility"))
                 {
@@ -365,10 +366,9 @@ namespace SharedProject.GamesScreens
                     {
                         _messages.Enqueue("   Enemy was hit...");
 
-                        AttributePair health = new(enemy.Health.Current);
-
-                        health.Current -= Helper.Random.Next(1, 7);
-                        enemy.Health = health;
+                        Move attack = BasicAttack.CreateInstance();
+                        attack.Apply(Player, enemy);
+                        // health.Current -= Helper.Random.Next(1, 7);
                     }
                     else
                     {
@@ -390,7 +390,12 @@ namespace SharedProject.GamesScreens
             foreach (ICharacter c in encounter.Enemies)
             {
                 Mob mob = c as Mob;
-                Point distance = mob.AnimatedSprite.Tile - Player.Tile;
+                Point distance = mob.AnimatedSprite.Tile - Player.Sprite.Tile;
+
+                if (HandleEnemyMove(c, Player))
+                {
+                    return;
+                }
 
                 if ((Math.Abs(distance.X) == 1 && Math.Abs(distance.Y) == 0) || 
                     (Math.Abs(distance.Y) == 1 && Math.Abs(distance.X) == 0))
@@ -402,6 +407,9 @@ namespace SharedProject.GamesScreens
                         if (!Helper.RollDie(Player, "Agility"))
                         {
                             _messages.Enqueue($"The {c.Name} swings and hits...");
+
+                            Move attack = BasicAttack.CreateInstance();
+                            attack.Apply(c, Player);
                         }
                         else
                         {
@@ -412,8 +420,90 @@ namespace SharedProject.GamesScreens
                     {
                         _messages.Enqueue($"The {c.Name} swings and misses");
                     }
+                    return;
                 }
             }
+        }
+
+        private bool HandleEnemyMove(ICharacter c, Player player)
+        {
+            Mob e = c as Mob;
+
+            float distance = Vector2.Distance(player.Sprite.Position, e.AnimatedSprite.Position);
+            CollisionLayer collisions = encounter.Map.Layers.FirstOrDefault(x => x is CollisionLayer) as CollisionLayer;
+                
+            List<Vector2> points = TileMap.GetPointsOnLine(
+                player.Sprite.Tile.X,
+                player.Sprite.Tile.Y,
+                e.AnimatedSprite.Tile.X,
+                e.AnimatedSprite.Tile.Y).OrderByDescending(x => x.X).ThenBy(x => x.Y).ToList();
+
+            bool blocked = false;
+
+            foreach (Vector2 point in points)
+            {
+                if (collisions == null)
+                {
+                    break;
+                }
+
+                foreach (Rectangle rectangle  in collisions.Collisions.Keys)
+                {
+                    if (rectangle.Contains(point))
+                    {
+                        blocked = true;
+                        break;
+                    }
+                }
+            }
+
+            if (blocked)
+            {
+                return false;
+            }
+
+            Point next = e.AnimatedSprite.Tile;
+
+            if (e.AnimatedSprite.Tile.X < player.Sprite.Tile.X)
+            {
+                next.X++;
+            }
+            else if (e.AnimatedSprite.Tile.X > player.Sprite.Tile.X)
+            {
+                next.X--;
+            }
+            else if (e.AnimatedSprite.Tile.Y < player.Sprite.Tile.Y )
+            {
+                next.Y++;
+            }
+            else if (e.AnimatedSprite.Tile.Y > player.Sprite.Tile.Y)
+            {
+                next.Y--;
+            }
+
+            Point nextInPixels = new(next.X * Engine.TileWidth, next.Y * Engine.TileHeight);
+
+            if (collisions != null)
+            {
+                foreach (Rectangle rectangle in collisions.Collisions.Keys)
+                {
+                    if (rectangle.Contains(nextInPixels))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            Rectangle location = Helper.Destiation(Player.Sprite.Tile);
+
+            if (!location.Intersects(Helper.Destiation(next)))
+            {
+                e.AnimatedSprite.Tile = next;
+                e.AnimatedSprite.Position = new Vector2(e.AnimatedSprite.Tile.X * Engine.TileWidth, e.AnimatedSprite.Tile.Y * Engine.TileHeight);
+                return false;
+            }
+
+            return false;
         }
 
         public override void Draw(GameTime gameTime)
